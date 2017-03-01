@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+<!-- http://generator.sturgeon.mopaas.com/index.html -->
+   <!-- id:	context唯一的标识符。此值将用于某些错误消息。
+        targetRuntime: 指示mybatis版本 -->
+  <context id="MySqlTables" targetRuntime="MyBatis3">
+    <commentGenerator type="MyCommentGenerator">
+		<property name="suppressAllComments" value="true"/>
+	</commentGenerator>
+    <!--   配置jdbc驱动 -->
+ <!--    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://120.25.220.63:3306/yibaodb"
+        userId="app_test"
+        password="life12345">
+    </jdbcConnection> -->
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://localhost:3306/ijob"
+        userId="root"
+        password="admin">
+    </jdbcConnection>
+    <!--  -->
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+	
+    <javaModelGenerator targetPackage="com.sinolife.common.domain" targetProject="D:\workingSpace2\tools">
+      <property name="enableSubPackages" value="false" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+	<!-- mapper文件 -->
+    <sqlMapGenerator targetPackage="com.sinolife.common.mapper"  targetProject="D:\workingSpace2\tools">
+      <property name="enableSubPackages" value="false" />
+    </sqlMapGenerator>
+    <!-- targetProject  指的是文件系统的绝对路径 -->
+    <!-- type="SPRING"  spring管理的 -->
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.sinolife.common.dao"  targetProject="D:\workingSpace2\tools">
+      <property name="enableSubPackages" value="false" />
+    </javaClientGenerator>
+
+<!--数据库 schema - 如果您的数据库不使用 schema ，或者有一个默认的 schema 您不需要设置 schema。 如果需要，指定的值可以包含SQL通配符。
+    <table tableName="user_info" domainObjectName="User" >
+      <property name="useActualColumnNames" value="false"/>
+      <generatedKey column="ID" sqlStatement="MySql" identity="true" />
+	    忽略的字段
+      <ignoreColumn column="FRED" />
+            元素从将某些属性默认计算的值更改为内省数据库列得的值
+      <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />
+    </table>
+--> 
+	<table tableName="url_info">
+		<generatedKey column="url_id" sqlStatement="MySql" identity="true" />
+	</table>
+  </context>
+</generatorConfiguration>

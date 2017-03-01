@@ -1,0 +1,16 @@
+  <html> [BR] 
+  <head> [BR] 
+    <title>Welcome!</title> [BR] 
+  </head>[BR] 
+  <body> [BR] 
+    <#-- Greet the user with his/her name -->[BR] 
+    <h1>Welcome ${user}!</h1>[BR] 
+    <p>We have these animals:[BR] 
+    <ul> [BR] 
+    <#list animals as being> [BR] 
+       <li>${being.branchName} for ${being.branchName} Euros [BR] 
+    </#list> [BR] 
+    </ul>[BR] 
+  </body>[BR] 
+
+  </html> 
