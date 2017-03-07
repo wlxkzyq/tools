@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 
 /** 
-* 全称合格java type
+* 全称java type
 * @author 作者 : zyq
 * 创建时间：2017年3月1日 上午11:49:32 
 * @version 
@@ -471,4 +471,5 @@ public class FullyQualifiedJavaType implements
         int index = baseQualifiedName.lastIndexOf('.');
         return baseQualifiedName.substring(0, index);
     }
+    
 } 

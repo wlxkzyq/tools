@@ -17,6 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import tools.common.PathUtil;
+import tools.mygenerator.api.CommentGenerator;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.dictionary.GenerateDictionary;
 import tools.mygenerator.internal.db.ConnectionFactory;
@@ -41,6 +42,13 @@ public class Context {
 	 */
 	private TableChooseConfiguration tableChooseConfiguration;
 	
+	/**
+	 * 注释生成类
+	 */
+	private CommentGenerator commentGenerator;
+	
+	private JavaModelGeneratorConfiguration javaModelGeneratorConfiguration;
+	
 	private final Logger logger=Logger.getLogger(Context.class);
 	
 	
@@ -51,17 +59,28 @@ public class Context {
 	public void setTableChooseConfiguration(TableChooseConfiguration tableChooseConfiguration) {
 		this.tableChooseConfiguration = tableChooseConfiguration;
 	}
+	public CommentGenerator getCommentGenerator() {
+		return commentGenerator;
+	}
 
-	private List<IntrospectedTable> introspectedTables;
-    
+	public void setCommentGenerator(CommentGenerator commentGenerator) {
+		this.commentGenerator = commentGenerator;
+	}
+	public JavaModelGeneratorConfiguration getJavaModelGeneratorConfiguration() {
+		return javaModelGeneratorConfiguration;
+	}
+	public void setJavaModelGeneratorConfiguration(JavaModelGeneratorConfiguration javaModelGeneratorConfiguration) {
+		this.javaModelGeneratorConfiguration = javaModelGeneratorConfiguration;
+	}
+
+	
+	
 	/**
 	 * 将数据库信息封装为实体类
 	 * @return
 	 * @throws SQLException
 	 */
-    public List<IntrospectedTable> introspectTables(){
-    	introspectedTables = new ArrayList<IntrospectedTable>();
-    	
+    public List<IntrospectedTable> introspectTables(List<String> warnings){
     	Connection connection = null;
     	try {
 			connection = getConnection();
@@ -69,11 +88,9 @@ public class Context {
 			System.out.println(meta.getDatabaseProductName());
 			System.out.println("===================");
 			//databaseInfo(meta);
-			List<String> warnings=new ArrayList<String>();
 	    	DatabaseIntrospector di=new DatabaseIntrospector();
 	    	di.setDatabaseMetaData(meta);
 	    	List<IntrospectedTable> list=di.introspectTables(tableChooseConfiguration, warnings,null);
-	    	logger.warn(warnings);
 	    	return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -108,7 +125,8 @@ public class Context {
 //		c.setUserId("root");
 		Context context=new Context();
 		context.setJdbcConnectionConfiguration(c);
-		context.introspectTables();
+		List<String> warnings = null;
+		context.introspectTables(warnings);
 		System.out.println(new Date().getTime()-d.getTime());
 	}
     public void databaseInfo(DatabaseMetaData databaseMeta) throws SQLException, IOException{

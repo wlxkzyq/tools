@@ -3,7 +3,7 @@ package tools.mygenerator.api.dom;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import tools.mygenerator.api.dom.java.FullyQualifiedJavaType;
 
 /** 
 * 类说明 

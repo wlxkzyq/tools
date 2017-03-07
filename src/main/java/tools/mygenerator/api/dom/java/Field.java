@@ -3,7 +3,7 @@ package tools.mygenerator.api.dom.java;
 import tools.mygenerator.api.dom.OutputUtilities;
 
 /** 
-* java属性类
+* java成员变量类
 * @author 作者 : zyq
 * 创建时间：2017年3月1日 下午2:22:12 
 * @version 

@@ -3,30 +3,29 @@ package tools.mygenerator.dictionary;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import tools.common.PathUtil;
+import tools.mygenerator.api.IntrospectedColumn;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.config.Context;
 import tools.mygenerator.config.JDBCConnectionConfiguration;
 import tools.mygenerator.config.TableChooseConfiguration;
 
 /** 
-* 生成数据字典开始类
+* 获取数据库信息后做其它操作 
 * @author 作者 : zyq
-* 创建时间：2017年2月28日 下午4:43:49 
+* 创建时间：2017年3月3日 下午6:58:02 
 * @version 
 */
-public class Start {
-	
-	
-	public static void main(String[] args) throws SQLException, IOException {
-		Date d=new Date();
+public class Start2 {
+	public static void main(String[] args) throws FileNotFoundException {
+Date d=new Date();
 		
 		//设置jdbc链接配置
     	JDBCConnectionConfiguration c=new JDBCConnectionConfiguration();
@@ -46,10 +45,10 @@ public class Start {
 		tc.setNameLike("%");
 		
 		//设置指定表
-//		Set<String> chooseTables=new HashSet<String>();
-//		chooseTables.add("test");
-//		chooseTables.add("user");
-//		tc.setChooseTables(chooseTables);
+		Set<String> chooseTables=new HashSet<String>();
+		//chooseTables.add("t_wf_workitem");
+		chooseTables.add("t_wf_processinfo");
+		tc.setChooseTables(chooseTables);
 		//设置忽略表
 //		Set<String> ignoreTables=new HashSet<String>();
 //		ignoreTables.add("test");
@@ -64,9 +63,16 @@ public class Start {
 		List<IntrospectedTable> list=context.introspectTables(warnings);
 		System.out.println(new Date().getTime()-d.getTime());
 		
-		FileInputStream fis=new FileInputStream(PathUtil.getClassPath()+"generator"+File.separator+"dictionary_temp.xls");
-    	GenerateDictionary gd=new GenerateDictionary(fis);
-    	gd.generateDictionary("d://jjj2.xls", list);
+		IntrospectedTable it=list.get(0);
+		
+		FileOutputStream fos=new FileOutputStream("D:\\tt.txt");
+		PrintWriter pw=new PrintWriter(fos);
+		List<IntrospectedColumn> columns=it.getColumns();
+		for (int i = 0; i < columns.size(); i++) {
+			pw.println("tp."+columns.get(i).getColumnName()+" as "+columns.get(i).getColumnName().toLowerCase()+",");
+		}
+		pw.flush();
+		pw.close();
+		
 	}
-
 }

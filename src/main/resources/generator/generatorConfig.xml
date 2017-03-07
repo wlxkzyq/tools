@@ -8,7 +8,7 @@
    <!-- id:	context唯一的标识符。此值将用于某些错误消息。
         targetRuntime: 指示mybatis版本 -->
   <context id="MySqlTables" targetRuntime="MyBatis3">
-    <commentGenerator type="MyCommentGenerator">
+    <commentGenerator type="tools.generator.MyCommentGenerator">
 		<property name="suppressAllComments" value="true"/>
 	</commentGenerator>
     <!--   配置jdbc驱动 -->
@@ -18,7 +18,7 @@
         password="life12345">
     </jdbcConnection> -->
     <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-        connectionURL="jdbc:mysql://localhost:3306/ijob"
+        connectionURL="jdbc:mysql://localhost:3306/yzt_db"
         userId="root"
         password="admin">
     </jdbcConnection>
@@ -52,8 +52,8 @@
       <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />
     </table>
 --> 
-	<table tableName="url_info">
-		<generatedKey column="url_id" sqlStatement="MySql" identity="true" />
+	<table tableName="test">
+		<generatedKey column="id" sqlStatement="MySql" identity="true" />
 	</table>
   </context>
 </generatorConfiguration>
