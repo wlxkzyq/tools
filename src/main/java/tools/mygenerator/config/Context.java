@@ -15,9 +15,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.mybatis.generator.api.GeneratedJavaFile;
 
 import tools.common.PathUtil;
 import tools.mygenerator.api.CommentGenerator;
+import tools.mygenerator.api.GeneratedXmlFile;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.dictionary.GenerateDictionary;
 import tools.mygenerator.internal.db.ConnectionFactory;
@@ -104,12 +106,32 @@ public class Context {
     	return null;
     }
     
+    /**
+     * 获取数据库连接
+     * @return
+     * @throws SQLException
+     */
     private Connection getConnection() throws SQLException {
         Connection connection = ConnectionFactory.getInstance().getConnection(
                 jdbcConnectionConfiguration);
-
         return connection;
     }
+    
+    /**
+     * 生成file类，添加到集合
+     * @param generatedJavaFiles	存放java文件的集合
+     * @param generatedXmlFiles		存放xml文件的集合
+     * @param warnings				存放警告信息
+     */
+    public void generateFiles(List<GeneratedJavaFile> generatedJavaFiles,
+    		List<GeneratedXmlFile> generatedXmlFiles,List<String> warnings){
+    	
+    }
+    
+    
+    
+    
+    
     
     public static void main(String[] args) throws SQLException {
     	Date d=new Date();
