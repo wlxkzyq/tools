@@ -1,5 +1,7 @@
 package tools.mygenerator.config;
 
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,13 +17,23 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.mybatis.generator.api.GeneratedJavaFile;
+
+import com.sun.xml.internal.bind.v2.TODO;
 
 import tools.common.PathUtil;
 import tools.mygenerator.api.CommentGenerator;
+import tools.mygenerator.api.GeneratedJavaFile;
 import tools.mygenerator.api.GeneratedXmlFile;
 import tools.mygenerator.api.IntrospectedTable;
+import tools.mygenerator.api.JavaFormatter;
+import tools.mygenerator.api.Plugin;
+import tools.mygenerator.api.XmlFormatter;
+import tools.mygenerator.api.dom.DefaultJavaFormatter;
+import tools.mygenerator.api.dom.DefaultXmlFormatter;
 import tools.mygenerator.dictionary.GenerateDictionary;
+import tools.mygenerator.internal.DefaultCommentGenerator;
+import tools.mygenerator.internal.ObjectFactory;
+import tools.mygenerator.internal.PluginAggregator;
 import tools.mygenerator.internal.db.ConnectionFactory;
 import tools.mygenerator.internal.db.DatabaseIntrospector;
 
@@ -33,6 +45,13 @@ import tools.mygenerator.internal.db.DatabaseIntrospector;
 * @version 
 */
 public class Context {
+	
+	private String id;
+	
+	/**
+	 * 数据库所有表
+	 */
+	private List<IntrospectedTable> introspectedTables;
 	
 	/**
 	 * jdbc链接配置
@@ -49,8 +68,35 @@ public class Context {
 	 */
 	private CommentGenerator commentGenerator;
 	
+	/**
+	 * java 实体类生成配置
+	 */
 	private JavaModelGeneratorConfiguration javaModelGeneratorConfiguration;
 	
+	/**
+	 * 插件聚合器
+	 */
+	private PluginAggregator pluginAggregator;
+	
+	/**
+	 * 插件配置
+	 */
+	private List<PluginConfiguration> pluginConfigurations;
+	
+	private JavaFormatter javaFormatter;
+	
+	private XmlFormatter xmlFormatter;
+	
+	/**
+	 * 使用哪些生成器
+	 */
+	private List<String> generators;
+	
+	/**
+	 * 生成文件是否覆盖
+	 */
+    private boolean overwriteEnabled;
+    
 	private final Logger logger=Logger.getLogger(Context.class);
 	
 	
@@ -74,8 +120,37 @@ public class Context {
 	public void setJavaModelGeneratorConfiguration(JavaModelGeneratorConfiguration javaModelGeneratorConfiguration) {
 		this.javaModelGeneratorConfiguration = javaModelGeneratorConfiguration;
 	}
+	public List<IntrospectedTable> getIntrospectedTables() {
+		return introspectedTables;
+	}
+	public void setIntrospectedTables(List<IntrospectedTable> introspectedTables) {
+		this.introspectedTables = introspectedTables;
+	}
+	public JavaFormatter getJavaFormatter() {
+		return javaFormatter;
+	}
+	public void setJavaFormatter(JavaFormatter javaFormatter) {
+		this.javaFormatter = javaFormatter;
+	}
+	public List<String> getGenerators() {
+		return generators;
+	}
+	public void setGenerators(List<String> generators) {
+		this.generators = generators;
+	}
+	public XmlFormatter getXmlFormatter() {
+		return xmlFormatter;
+	}
+	public void setXmlFormatter(XmlFormatter xmlFormatter) {
+		this.xmlFormatter = xmlFormatter;
+	}
+	public boolean isOverwriteEnabled() {
+		return overwriteEnabled;
+	}
+	public void setOverwriteEnabled(boolean overwriteEnabled) {
+		this.overwriteEnabled = overwriteEnabled;
+	}
 
-	
 	
 	/**
 	 * 将数据库信息封装为实体类
@@ -93,6 +168,7 @@ public class Context {
 	    	DatabaseIntrospector di=new DatabaseIntrospector();
 	    	di.setDatabaseMetaData(meta);
 	    	List<IntrospectedTable> list=di.introspectTables(tableChooseConfiguration, warnings,null);
+	    	this.introspectedTables=list;
 	    	return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -125,10 +201,60 @@ public class Context {
      */
     public void generateFiles(List<GeneratedJavaFile> generatedJavaFiles,
     		List<GeneratedXmlFile> generatedXmlFiles,List<String> warnings){
+    	pluginAggregator = new PluginAggregator();
+    	initializeContext();
+    	//注册插件
+    	for (PluginConfiguration pluginConfiguration : pluginConfigurations) {
+            Plugin plugin = ObjectFactory.createPlugin(this,
+                    pluginConfiguration);
+            if (plugin.validate(warnings)) {
+                pluginAggregator.addPlugin(plugin);
+            } else {
+                warnings.add(getString("Warning.24", //$NON-NLS-1$
+                        pluginConfiguration.getConfigurationType(), id));
+            }
+        }
+        if (introspectedTables != null) {
+            for (IntrospectedTable introspectedTable : introspectedTables) {
+
+            	initializeIntrospectedTable(introspectedTable);
+                //introspectedTable.calculateGenerators(warnings, callback);
+                generatedJavaFiles.addAll(GenerateConfirm.generateJavaFiles(generators, this, introspectedTable, warnings));
+                generatedXmlFiles.addAll(GenerateConfirm.generateXmlFiles(generators, this, introspectedTable, warnings));
+
+                generatedJavaFiles.addAll(pluginAggregator
+                        .contextGenerateAdditionalJavaFiles(introspectedTable));
+                generatedXmlFiles.addAll(pluginAggregator
+                        .contextGenerateAdditionalXmlFiles(introspectedTable));
+            }
+        }
+
+        generatedJavaFiles.addAll(pluginAggregator
+                .contextGenerateAdditionalJavaFiles());
+        generatedXmlFiles.addAll(pluginAggregator
+                .contextGenerateAdditionalXmlFiles());
     	
     }
     
+    private void initializeIntrospectedTable(IntrospectedTable introspectedTable){
+    	//TODO 初始化表
+    	introspectedTable.hashCode();
+    }
     
+    /**
+     * 初始化context
+     */
+    private void initializeContext(){
+    	if(commentGenerator==null){
+    		commentGenerator=new DefaultCommentGenerator();
+    	}
+    	if(javaFormatter==null){
+    		javaFormatter=new DefaultJavaFormatter();
+    	}
+    	if(xmlFormatter==null){
+    		xmlFormatter=new DefaultXmlFormatter();
+    	}
+    }
     
     
     

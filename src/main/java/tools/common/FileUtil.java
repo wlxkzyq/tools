@@ -1,14 +1,11 @@
 package tools.common;
 
-import static org.mybatis.generator.internal.util.messages.Messages.getString;
-
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.util.StringTokenizer;
 
 /** 
 * 文件操作工具类
@@ -68,6 +65,38 @@ public class FileUtil {
 
         return answer;
 	}
+	
+    public static File getDirectory(String targetProject, String targetPackage) throws Exception
+             {
+        // targetProject is interpreted as a directory that must exist
+        //
+        // targetPackage is interpreted as a sub directory, but in package
+        // format (with dots instead of slashes). The sub directory will be
+        // created
+        // if it does not already exist
+
+        File project = new File(targetProject);
+        if (!project.isDirectory()) {
+            throw new Exception(targetProject+" 目录不存在！");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(targetPackage, "."); //$NON-NLS-1$
+        while (st.hasMoreTokens()) {
+            sb.append(st.nextToken());
+            sb.append(File.separatorChar);
+        }
+
+        File directory = new File(project, sb.toString());
+        if (!directory.isDirectory()) {
+            boolean rc = directory.mkdirs();
+            if (!rc) {
+                throw new Exception(directory.getAbsolutePath()+"目录创建失败！");
+            }
+        }
+
+        return directory;
+    }
 	
 	public static void main(String[] args) {
 		File f=new File("d:");

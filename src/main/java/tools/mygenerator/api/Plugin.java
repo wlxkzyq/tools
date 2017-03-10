@@ -3,6 +3,7 @@ package tools.mygenerator.api;
 import java.util.List;
 import java.util.Properties;
 
+import tools.mygenerator.api.dom.java.TopLevelClass;
 import tools.mygenerator.config.Context;
 
 /** 
@@ -63,5 +64,60 @@ public interface Plugin {
      *         be called
      */
     boolean validate(List<String> warnings);
+    /**
+     * This method can be used to generate any additional Java file needed by
+     * your implementation. This method is called once, after all other Java
+     * files have been generated.
+     * 
+     * @return a List of GeneratedJavaFiles - these files will be saved
+     *         with the other files from this run.
+     */
+    List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles();
+
+    /**
+     * This method can be used to generate additional Java files needed by your
+     * implementation that might be related to a specific table. This method is
+     * called once for every table in the configuration.
+     * 
+     * @param introspectedTable
+     *            The class containing information about the table as
+     *            introspected from the database
+     * @return a List of GeneratedJavaFiles - these files will be saved
+     *         with the other files from this run.
+     */
+    List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(
+            IntrospectedTable introspectedTable);
+
+    /**
+     * This method can be used to generate any additional XML file needed by
+     * your implementation. This method is called once, after all other XML
+     * files have been generated.
+     * 
+     * @return a List of GeneratedXmlFiles - these files will be saved
+     *         with the other files from this run.
+     */
+    List<GeneratedXmlFile> contextGenerateAdditionalXmlFiles();
+
+    /**
+     * This method can be used to generate additional XML files needed by your
+     * implementation that might be related to a specific table. This method is
+     * called once for every table in the configuration.
+     * 
+     * @param introspectedTable
+     *            The class containing information about the table as
+     *            introspected from the database
+     * @return a List of GeneratedXmlFiles - these files will be saved
+     *         with the other files from this run.
+     */
+    List<GeneratedXmlFile> contextGenerateAdditionalXmlFiles(
+            IntrospectedTable introspectedTable);
+    
+    /**
+     * 生成java实体类，在类所有field，method添加完之后执行该方法
+     * @param topLevelClass
+     * @param table
+     * @return
+     */
+    public boolean modelClassGenerator(TopLevelClass topLevelClass,IntrospectedTable table);
 
 }
