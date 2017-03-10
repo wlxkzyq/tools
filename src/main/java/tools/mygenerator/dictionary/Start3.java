@@ -91,17 +91,17 @@ public class Start3 {
 		System.out.println(get.getFormattedContent(0, false));
 		System.out.println(warnings);*/
 		
-		JavaEntityGenerator jg=new JavaEntityGenerator();
-		jg.setContext(context);
-		jg.setIntrospectedTable(it);
-		jg.setWarnings(warnings);
-		GeneratedJavaFile generatedJavaFile=
-				new GeneratedJavaFile(jg.getCompilationUnits().get(0), "tools", new DefaultJavaFormatter());
-		System.out.println(generatedJavaFile.getFormattedContent());
-		
-		FileOutputStream fos=new FileOutputStream("D://111.java");
-		fos.write(generatedJavaFile.getFormattedContent().getBytes());
-		fos.close();
+//		JavaEntityGenerator jg=new JavaEntityGenerator();
+//		jg.setContext(context);
+//		jg.setIntrospectedTable(it);
+//		jg.setWarnings(warnings);
+//		GeneratedJavaFile generatedJavaFile=
+//				new GeneratedJavaFile(jg.getCompilationUnits().get(0), "tools", new DefaultJavaFormatter());
+//		System.out.println(generatedJavaFile.getFormattedContent());
+//		
+//		FileOutputStream fos=new FileOutputStream("D://111.java");
+//		fos.write(generatedJavaFile.getFormattedContent().getBytes());
+//		fos.close();
 	
 		
 	}
