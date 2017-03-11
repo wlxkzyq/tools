@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 * @version 
 */
 public class Messages {
-	private static final String BUNDLE_NAME = "tools.mygenerator.internal.util.message.messages";
+	private static final String BUNDLE_NAME = "tools.mygenerator.internal.util.messages.messages";
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(BUNDLE_NAME);
 	private Messages() {

@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import static tools.mygenerator.internal.util.messages.Messages.getString;
 
 import tools.common.FileUtil;
@@ -16,6 +18,8 @@ import tools.mygenerator.config.Context;
 * @version 
 */
 public class MyGenerator {
+	
+	private static final Logger logger=Logger.getLogger(MyGenerator.class);
 	
 	private Context context;
 	
@@ -61,12 +65,26 @@ public class MyGenerator {
                     .getTargetProject(), gjf.getTargetPackage());
             targetFile = new File(directory, gjf.getFileName());
             if (targetFile.exists()) {
+            	//文件已存在
             	if(context.isOverwriteEnabled()){
-            		//TODO 覆盖
+            		//覆盖
+            		source = gjf.getFormattedContent();
+                    warnings.add(getString("Warning.11", //$NON-NLS-1$
+                            targetFile.getAbsolutePath()));
             	}else{
-            		//TODO 添加新文件
+            		//添加新文件
+            		source = gjf.getFormattedContent();
+                    targetFile = FileUtil.getUniqueFileName(directory, gjf
+                            .getFileName());
+                    warnings.add(getString(
+                            "Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
             	}
+            }else{
+            	//文件不存在
+            	source = gjf.getFormattedContent();
             }
+            FileUtil.writeFile(targetFile, source, gjf.getFileEncoding());
+            logger.info("【"+targetFile+"】生成完毕！");
 		}
         //FileUtil.writeFile(file, content, fileEncoding);
     }

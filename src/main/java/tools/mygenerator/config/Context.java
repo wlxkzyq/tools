@@ -155,9 +155,10 @@ public class Context {
 	/**
 	 * 将数据库信息封装为实体类
 	 * @return
+	 * @throws Exception 
 	 * @throws SQLException
 	 */
-    public List<IntrospectedTable> introspectTables(List<String> warnings){
+    public List<IntrospectedTable> introspectTables(List<String> warnings) throws Exception{
     	Connection connection = null;
     	try {
 			connection = getConnection();
@@ -172,6 +173,7 @@ public class Context {
 	    	return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new Exception("读取数据库信息失败！");
 		} finally{
 			try {
 				connection.close();
@@ -179,7 +181,6 @@ public class Context {
 				e.printStackTrace();
 			}
 		}
-    	return null;
     }
     
     /**
@@ -198,11 +199,12 @@ public class Context {
      * @param generatedJavaFiles	存放java文件的集合
      * @param generatedXmlFiles		存放xml文件的集合
      * @param warnings				存放警告信息
+     * @throws Exception 
      */
     public void generateFiles(List<GeneratedJavaFile> generatedJavaFiles,
-    		List<GeneratedXmlFile> generatedXmlFiles,List<String> warnings){
+    		List<GeneratedXmlFile> generatedXmlFiles,List<String> warnings) throws Exception{
     	pluginAggregator = new PluginAggregator();
-    	initializeContext();
+    	initializeContext(warnings);
     	//注册插件
     	for (PluginConfiguration pluginConfiguration : pluginConfigurations) {
             Plugin plugin = ObjectFactory.createPlugin(this,
@@ -243,8 +245,9 @@ public class Context {
     
     /**
      * 初始化context
+     * @throws Exception 
      */
-    private void initializeContext(){
+    private void initializeContext(List<String> warnings) throws Exception{
     	if(commentGenerator==null){
     		commentGenerator=new DefaultCommentGenerator();
     	}
@@ -254,12 +257,17 @@ public class Context {
     	if(xmlFormatter==null){
     		xmlFormatter=new DefaultXmlFormatter();
     	}
+    	if(pluginConfigurations==null){
+    		pluginConfigurations=new ArrayList<PluginConfiguration>();
+    	}
+    	introspectTables(warnings);
+    	
     }
     
     
     
     
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws Exception {
     	Date d=new Date();
     	
     	JDBCConnectionConfiguration c=new JDBCConnectionConfiguration();

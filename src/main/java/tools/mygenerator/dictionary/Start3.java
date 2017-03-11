@@ -29,7 +29,7 @@ import tools.mygenerator.internal.DefaultCommentGenerator;
 * @version 
 */
 public class Start3 {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		Date d=new Date();
 		
 		//设置jdbc链接配置

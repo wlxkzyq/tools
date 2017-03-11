@@ -25,7 +25,7 @@ import tools.mygenerator.config.TableChooseConfiguration;
 public class Start {
 	
 	
-	public static void main(String[] args) throws SQLException, IOException {
+	public static void main(String[] args) throws Exception {
 		Date d=new Date();
 		
 		//设置jdbc链接配置

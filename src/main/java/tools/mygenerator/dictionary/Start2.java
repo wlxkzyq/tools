@@ -24,7 +24,7 @@ import tools.mygenerator.config.TableChooseConfiguration;
 * @version 
 */
 public class Start2 {
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws Exception {
 Date d=new Date();
 		
 		//设置jdbc链接配置

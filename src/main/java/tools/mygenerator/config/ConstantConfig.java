@@ -1,6 +1,5 @@
 package tools.mygenerator.config;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
