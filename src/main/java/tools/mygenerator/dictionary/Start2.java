@@ -46,7 +46,7 @@ Date d=new Date();
 		
 		//设置指定表
 		Set<String> chooseTables=new HashSet<String>();
-		chooseTables.add("t_wf_workitem");
+		chooseTables.add("t_wf_exportcfg");
 		//chooseTables.add("t_wf_processinfo");
 		tc.setChooseTables(chooseTables);
 		//设置忽略表
@@ -69,7 +69,7 @@ Date d=new Date();
 		PrintWriter pw=new PrintWriter(fos);
 		List<IntrospectedColumn> columns=it.getColumns();
 		for (int i = 0; i < columns.size(); i++) {
-			pw.println("tw."+columns.get(i).getColumnName()+" as "+columns.get(i).getColumnName().toLowerCase()+",");
+			pw.println("t."+columns.get(i).getColumnName()+" as "+columns.get(i).getColumnName().toLowerCase()+",");
 		}
 		pw.flush();
 		pw.close();

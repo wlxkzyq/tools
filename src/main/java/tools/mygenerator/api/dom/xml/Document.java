@@ -1,7 +1,6 @@
 package tools.mygenerator.api.dom.xml;
 
-import org.mybatis.generator.api.dom.OutputUtilities;
-import org.mybatis.generator.api.dom.xml.XmlElement;
+import tools.mygenerator.api.dom.OutputUtilities;
 
 /** 
 * xml Document类

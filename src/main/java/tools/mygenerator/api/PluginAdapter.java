@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Properties;
 
 import tools.mygenerator.api.dom.java.TopLevelClass;
+import tools.mygenerator.api.dom.xml.Document;
 import tools.mygenerator.config.Context;
 
 /** 
@@ -64,5 +65,15 @@ public abstract class PluginAdapter implements Plugin {
 	public boolean modelClassGenerator(TopLevelClass topLevelClass,IntrospectedTable table){
     	return true;
     }
+	
+	@Override
+	public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
+		return true;
+	}
+	
+	@Override
+	public boolean sqlMapGenerated(GeneratedXmlFile generatedXmlFile, IntrospectedTable introspectedTable) {
+		return true;
+	}
 
 }

@@ -9,6 +9,7 @@ import tools.mygenerator.api.GeneratedXmlFile;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.api.Plugin;
 import tools.mygenerator.api.dom.java.TopLevelClass;
+import tools.mygenerator.api.dom.xml.Document;
 import tools.mygenerator.config.Context;
 
 /** 
@@ -113,6 +114,32 @@ public class PluginAggregator implements Plugin{
 			}
 		}
 		return answer;
+	}
+
+	@Override
+	public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
+		boolean rc=true;
+		
+		for (Plugin plugin : plugins) {
+			if(!plugin.sqlMapDocumentGenerated(document, introspectedTable)){
+				rc = false;
+                break;
+			}
+		}
+		return rc;
+	}
+
+	@Override
+	public boolean sqlMapGenerated(GeneratedXmlFile generatedXmlFile, IntrospectedTable introspectedTable) {
+		boolean rc=true;
+		
+		for (Plugin plugin : plugins) {
+			if(!plugin.sqlMapGenerated(generatedXmlFile, introspectedTable)){
+				rc = false;
+                break;
+			}
+		}
+		return rc;
 	}
 
 }

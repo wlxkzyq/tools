@@ -1,12 +1,5 @@
 package tools.mygenerator.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import tools.mygenerator.codegen.AbstractJavaGenerator;
-import tools.mygenerator.codegen.AbstractXmlGenerator;
-import tools.mygenerator.codegen.JavaEntityGenerator;
-
 /** 
 * 在map存放生成器
 * @author 作者 : zyq
@@ -16,5 +9,8 @@ import tools.mygenerator.codegen.JavaEntityGenerator;
 public class GeneratorRegistry {
 	
 	public static final String javaEntity="javaEntity";
+	
+	
+	public static final String mybatis3Mapper="mybatis3Mapper";
 
 }

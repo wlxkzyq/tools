@@ -10,6 +10,8 @@ import tools.mygenerator.config.Context;
 import tools.mygenerator.config.GeneratorRegistry;
 import tools.mygenerator.config.JDBCConnectionConfiguration;
 import tools.mygenerator.config.JavaModelGeneratorConfiguration;
+import tools.mygenerator.config.PluginConfiguration;
+import tools.mygenerator.config.SqlMapGeneratorConfiguration;
 import tools.mygenerator.config.TableChooseConfiguration;
 import tools.mygenerator.internal.DefaultCommentGenerator;
 
@@ -66,23 +68,42 @@ public class GeneratorStart {
 		//配置java实体类生成规则
 		JavaModelGeneratorConfiguration javaModelGeneratorConfiguration=new JavaModelGeneratorConfiguration();
 		javaModelGeneratorConfiguration.addProperty("trimStrings", "true");
-		javaModelGeneratorConfiguration.setTargetPackage("tools.test");
+		javaModelGeneratorConfiguration.setTargetPackage("tools.test.entity");
 		javaModelGeneratorConfiguration.setTargetProject("D:/hhh");
 		context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
+		
+		//配置sqlMapper生成规则
+		SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration=new SqlMapGeneratorConfiguration();
+		sqlMapGeneratorConfiguration.setTargetPackage("tools.test.mapper");
+		sqlMapGeneratorConfiguration.setTargetProject("D:/hhh");
+		context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
+		
 		
 		//配置使用哪些生成器
 		List<String> generators=new ArrayList<String>();
 		generators.add(GeneratorRegistry.javaEntity);
+		generators.add(GeneratorRegistry.mybatis3Mapper);
 		context.setGenerators(generators);
 		
+		//配置使用的插件
+		List<PluginConfiguration> pluginConfigurations=new ArrayList<PluginConfiguration>();
+		//==添加toStringPlugin插件
+		PluginConfiguration toStringPlugin=new PluginConfiguration();
+		toStringPlugin.setConfigurationType("tools.mygenerator.plugins.ToStringPlugin");
+		pluginConfigurations.add(toStringPlugin);
+		context.setPluginConfigurations(pluginConfigurations);
+		
 		//配置生成的文件是否覆盖
-		context.setOverwriteEnabled(true);
+		context.setOverwriteEnabled(false);
 		
 		
 		
 		MyGenerator my=new MyGenerator(context, warnings);
 		my.generate();
-		System.out.println(warnings);
+		for (String warning : warnings) {
+			System.out.println(warning);
+		}
+		
 	}
 
 }

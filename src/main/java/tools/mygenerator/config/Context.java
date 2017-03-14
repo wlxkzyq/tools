@@ -74,6 +74,11 @@ public class Context {
 	private JavaModelGeneratorConfiguration javaModelGeneratorConfiguration;
 	
 	/**
+	 * sqlMapper生成配置
+	 */
+	private SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration;
+	
+	/**
 	 * 插件聚合器
 	 */
 	private PluginAggregator pluginAggregator;
@@ -150,8 +155,22 @@ public class Context {
 	public void setOverwriteEnabled(boolean overwriteEnabled) {
 		this.overwriteEnabled = overwriteEnabled;
 	}
+	public List<PluginConfiguration> getPluginConfigurations() {
+		return pluginConfigurations;
+	}
+	public void setPluginConfigurations(List<PluginConfiguration> pluginConfigurations) {
+		this.pluginConfigurations = pluginConfigurations;
+	}
+	public PluginAggregator getPluginAggregator() {
+		return pluginAggregator;
+	}
+	public SqlMapGeneratorConfiguration getSqlMapGeneratorConfiguration() {
+		return sqlMapGeneratorConfiguration;
+	}
+	public void setSqlMapGeneratorConfiguration(SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration) {
+		this.sqlMapGeneratorConfiguration = sqlMapGeneratorConfiguration;
+	}
 
-	
 	/**
 	 * 将数据库信息封装为实体类
 	 * @return

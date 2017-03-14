@@ -54,7 +54,8 @@ public class JavaEntityGenerator extends AbstractJavaGenerator{
             Method setMethod=getJavaBeansSetter(introspectedColumn);
             topLevelClass.addMethod(setMethod);
 		}
-        
+        if (context.getPluginAggregator().modelClassGenerator(topLevelClass, introspectedTable)) {
+        }
         List<CompilationUnit> answer= new ArrayList<CompilationUnit>();
         answer.add(topLevelClass);
 		return answer;

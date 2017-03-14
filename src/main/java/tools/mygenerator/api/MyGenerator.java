@@ -86,6 +86,35 @@ public class MyGenerator {
             FileUtil.writeFile(targetFile, source, gjf.getFileEncoding());
             logger.info("【"+targetFile+"】生成完毕！");
 		}
+        
+        //生成xml文件
+        for (GeneratedXmlFile gxf : generatedXmlFiles) {
+            File targetFile;
+            String source;
+            
+        	File directory = FileUtil.getDirectory(gxf
+                    .getTargetProject(), gxf.getTargetPackage());
+            targetFile = new File(directory, gxf.getFileName());
+            if (targetFile.exists()) {
+               
+                if (context.isOverwriteEnabled()) {
+                    source = gxf.getFormattedContent();
+                    warnings.add(getString("Warning.11", //$NON-NLS-1$
+                            targetFile.getAbsolutePath()));
+                } else {
+                    source = gxf.getFormattedContent();
+                    targetFile = FileUtil.getUniqueFileName(directory, gxf
+                            .getFileName());
+                    warnings.add(getString(
+                            "Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
+                }
+            } else {
+                source = gxf.getFormattedContent();
+            }
+            
+            FileUtil.writeFile(targetFile, source, "UTF-8");
+            logger.info("【"+targetFile+"】生成完毕！");
+		}
         //FileUtil.writeFile(file, content, fileEncoding);
     }
 

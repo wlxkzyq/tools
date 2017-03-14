@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Properties;
 
 import tools.mygenerator.api.dom.java.TopLevelClass;
+import tools.mygenerator.api.dom.xml.Document;
 import tools.mygenerator.config.Context;
 
 /** 
@@ -119,5 +120,16 @@ public interface Plugin {
      * @return
      */
     public boolean modelClassGenerator(TopLevelClass topLevelClass,IntrospectedTable table);
+
+    
+    /**
+     * 生成sqlMapperDocument时调用插件
+     * @param document
+     * @param introspectedTable
+     * @return
+     */
+    public boolean sqlMapDocumentGenerated(Document document,IntrospectedTable introspectedTable);
+    
+    public boolean sqlMapGenerated(GeneratedXmlFile generatedXmlFile ,IntrospectedTable introspectedTable);
 
 }

@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -104,6 +105,13 @@ public class ExportExcellUtil {
 	private CellStyle normalStyle;
 	
 	
+	/**
+	 * 数据库字段与导出excel列中文名key,value键值对对照
+	 */
+	private Map<String,String> columnMap;
+	
+	private Map<String,Integer> columnWidthMap;
+	
 	
 	public Workbook getWorkbook() {
 		return workbook;
@@ -116,6 +124,12 @@ public class ExportExcellUtil {
 	}
 	public void setNormalStyle(CellStyle normalStyle) {
 		this.normalStyle = normalStyle;
+	}
+	public void setColumnMap(Map<String, String> columnMap) {
+		this.columnMap = columnMap;
+	}
+	public void setColumnWidthMap(Map<String, Integer> columnWidthMap) {
+		this.columnWidthMap = columnWidthMap;
 	}
 	
 	
@@ -181,16 +195,24 @@ public class ExportExcellUtil {
 		Row titlerow=sheet.createRow(startRow);
 		Cell titlecell;
 		titlerow.setHeight((short)(15.625*25));
+		if(titleStyle==null){editTitleStyle();}
 		for (int i = 0; i < exportColumns.length; i++) {
-			sheet.setColumnWidth(i, exportColumns[i].getBytes().length*256);
+			Integer width=null;
+			if(columnWidthMap!=null){
+				width=columnWidthMap.get(exportColumns[i]);
+			}
+			if(width==null||width==0){
+				width=exportColumns[i].getBytes().length*256;
+			}
+			sheet.setColumnWidth(i, width);
 			titlecell=titlerow.createCell(i);
 			titlecell.setCellValue(exportColumns[i]);
-			if(titleStyle==null){editTitleStyle();}
 			titlecell.setCellStyle(titleStyle);
 		}
 		//填充list中的数据
 		Row normalrow;
 		Cell normalcell;
+		if(normalStyle==null){editNormalStyle();}
 		StringBuilder cellValue=new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
 			normalrow=sheet.createRow(startRow+1+i);
@@ -207,12 +229,60 @@ public class ExportExcellUtil {
 				}
 				//为sheet单元格设置值
 				normalcell.setCellValue(cellValue.toString());
-				if(normalStyle==null){editNormalStyle();}
 				normalcell.setCellStyle(normalStyle);
 			}
 		}
 		
 	}
+	
+	private void fillingSheetMap(List<Map<String,Object>> mapList,
+			Sheet sheet,int startRow){
+		if(mapList==null||mapList.size()==0)return;
+		sheet.setDefaultRowHeight(lineHeight);
+		//填充title行
+		Row titlerow=sheet.createRow(startRow);
+		Cell titlecell;
+		titlerow.setHeight((short)(15.625*25));
+		if(titleStyle==null){editTitleStyle();}
+		for (int i = 0; i < exportColumns.length; i++) {
+			Integer width=null;
+			if(columnWidthMap!=null){
+				width=columnWidthMap.get(exportColumns[i]);
+			}
+			if(width==null||width==0){
+				width=exportColumns[i].getBytes().length*256;
+			}
+			sheet.setColumnWidth(i, width);
+			titlecell=titlerow.createCell(i);
+			titlecell.setCellValue(columnMap.get(exportColumns[i]));
+			titlecell.setCellStyle(titleStyle);
+		}
+		//填充list中的数据
+		Row normalrow;
+		Cell normalcell;
+		if(normalStyle==null){editNormalStyle();}
+		StringBuilder cellValue=new StringBuilder();
+		for (int i = 0; i < mapList.size(); i++) {
+			normalrow=sheet.createRow(startRow+1+i);
+			normalrow.setHeight(lineHeight);
+			for (int j = 0; j < exportColumns.length; j++) {
+				normalcell=normalrow.createCell(j);
+				Object val=mapList.get(i).get(exportColumns[j]);
+				//如果得到的值为空，若要对值进行格式化也可以在这操作
+				if(val==null){
+					cellValue=new StringBuilder("");
+				}else{
+					cellValue=new StringBuilder(val.toString());
+					
+				}
+				//为sheet单元格设置值
+				normalcell.setCellValue(cellValue.toString());
+				normalcell.setCellStyle(normalStyle);
+			}
+		}
+	}
+	
+	
 	private List<Method> sortMethod(Class cla) throws NoSuchMethodException, SecurityException{
 		List<Method> methodList=new ArrayList<Method>();
 		Field[] fields=cla.getDeclaredFields();
@@ -309,6 +379,29 @@ public class ExportExcellUtil {
 		bos.flush();
 		bos.close();
 	}
+	
+	/**
+	 * map类型list转excel
+	 * @param outputStream	输出流
+	 * @param mapList	待转换的list
+	 * @param start		开始行
+	 * @throws Exception 
+	 */
+	public void mapListToExcel(OutputStream os,
+			List<Map<String,Object>> mapList,int start) throws Exception{
+		if(StringUtils.isBlank(sheetName)){sheetName="Sheet1";}
+		int n=workbook.getNumberOfSheets();
+		Sheet sheet;
+		if(n<1){
+			sheet=workbook.createSheet(sheetName);
+		}else{
+			sheet=workbook.getSheetAt(0);
+		}
+		fillingSheetMap(mapList, sheet, start);
+		workbook.write(os);
+	}
+	
+	
 	public static void main(String[] args) throws Exception {
 		//System.out.println((Short.MAX_VALUE));
 		File file=new File("D:\\workingSpace2\\app_Bs\\src\\main\\webapp\\supervise\\supervise.xls");

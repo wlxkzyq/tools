@@ -7,7 +7,10 @@ import tools.mygenerator.api.GeneratedJavaFile;
 import tools.mygenerator.api.GeneratedXmlFile;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.api.dom.java.CompilationUnit;
+import tools.mygenerator.api.dom.xml.Document;
 import tools.mygenerator.codegen.JavaEntityGenerator;
+import tools.mygenerator.codegen.MyBatis3MapperGenerator;
+import tools.mygenerator.internal.util.JavaBeansUtil;
 
 /** 
 * 控制使用那些生成器
@@ -42,19 +45,22 @@ public class GenerateConfirm {
 	public static List<GeneratedXmlFile> generateXmlFiles(List<String> generators,Context context,
 			IntrospectedTable table,List<String> warnings){
 		List<GeneratedXmlFile> generatedXmlFiles=new ArrayList<GeneratedXmlFile>();
-//		for (int i = 0; i < xmlGenerators.length; i++) {
-//			AbstractXmlGenerator xmlGenerator=GeneratorMap.xmlGeneratorMap.get(xmlGenerators[i]);
-//			if(xmlGenerator==null){
-//				throw new RuntimeException("["+xmlGenerators[i]+"]xml生成器不存在");
-//			}else{
-//				xmlGenerator.setContext(context);
-//				xmlGenerator.setIntrospectedTable(table);
-//				xmlGenerator.setWarnings(warnings);
-//				
-//				new GeneratedXmlFile(xmlGenerator.getDocument(),
-//						fileName, targetPackage, targetProject, true, context.getXmlFormatter());
-//			}
-//		}
+		
+		if(generators.contains(GeneratorRegistry.mybatis3Mapper)){
+			MyBatis3MapperGenerator mg=new MyBatis3MapperGenerator();
+			mg.setContext(context);
+			mg.setIntrospectedTable(table);
+			mg.setWarnings(warnings);
+			Document document=mg.getDocument();
+			GeneratedXmlFile gxf=new GeneratedXmlFile(document, 
+					JavaBeansUtil.getCamelCaseString(table.getTableName(), true)+"Mapper.xml",
+					context.getSqlMapGeneratorConfiguration().getTargetPackage(),
+					context.getSqlMapGeneratorConfiguration().getTargetProject(),
+					false, context.getXmlFormatter());
+			if (context.getPluginAggregator().sqlMapGenerated(gxf, table)) {
+				generatedXmlFiles.add(gxf);
+            }
+		}
 		
 		return generatedXmlFiles;
 		
