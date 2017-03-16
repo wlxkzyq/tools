@@ -14,6 +14,7 @@ import tools.mygenerator.api.dom.java.JavaVisibility;
 import tools.mygenerator.api.dom.java.Method;
 import tools.mygenerator.api.dom.java.TopLevelClass;
 import tools.mygenerator.config.JavaModelGeneratorConfiguration;
+import tools.mygenerator.internal.NameConfirm;
 
 /** 
 * java实体类 生成器 
@@ -30,7 +31,7 @@ public class JavaEntityGenerator extends AbstractJavaGenerator{
 				context.getJavaModelGeneratorConfiguration();
 		String targetPackage=javaModelGeneratorConfiguration.getTargetPackage();
 		FullyQualifiedJavaType type = new FullyQualifiedJavaType(targetPackage+"."+
-				getCamelCaseString(introspectedTable.getTableName(),true));
+				context.getNameConfirm().getBeanName( introspectedTable ));
 		TopLevelClass topLevelClass = new TopLevelClass(type);
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(topLevelClass);

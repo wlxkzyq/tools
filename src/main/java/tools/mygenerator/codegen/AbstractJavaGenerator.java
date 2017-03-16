@@ -18,6 +18,7 @@ import tools.mygenerator.api.dom.java.Parameter;
 import tools.mygenerator.api.dom.java.TopLevelClass;
 import tools.mygenerator.config.ConstantConfig;
 import tools.mygenerator.config.PropertyRegistry;
+import tools.mygenerator.internal.NameConfirm;
 
 /** 
 * java类 生成器 抽象类
@@ -44,7 +45,7 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator{
     }
 	
     public Field getJavaBeansField(IntrospectedColumn introspectedColumn) {
-    	String property = getCamelCaseString(introspectedColumn.getColumnName(),false);
+    	String property = context.getNameConfirm().getBeanFieldName( introspectedColumn );
         Field field = new Field();
         field.setVisibility(JavaVisibility.PRIVATE);
         field.setType(getFieldType(introspectedColumn));

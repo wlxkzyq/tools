@@ -130,6 +130,12 @@ public interface Plugin {
      */
     public boolean sqlMapDocumentGenerated(Document document,IntrospectedTable introspectedTable);
     
+    /**
+     * 生成SQLMapperFile文件时调用插件
+     * @param generatedXmlFile
+     * @param introspectedTable
+     * @return
+     */
     public boolean sqlMapGenerated(GeneratedXmlFile generatedXmlFile ,IntrospectedTable introspectedTable);
 
 }

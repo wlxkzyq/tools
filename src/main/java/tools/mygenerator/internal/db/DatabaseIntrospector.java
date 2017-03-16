@@ -16,9 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.mybatis.generator.api.JavaTypeResolver;
-import org.mybatis.generator.config.Context;
-import org.mybatis.generator.logging.Log;
 
 import tools.mygenerator.api.IntrospectedColumn;
 import tools.mygenerator.api.IntrospectedForeignKey;
@@ -36,9 +33,7 @@ import tools.mygenerator.config.TableConfiguration;
 public class DatabaseIntrospector {
 	private DatabaseMetaData databaseMetaData;
 	private Connection conn;
-    private JavaTypeResolver javaTypeResolver;
     private List<String> warnings;
-    private Context context;
     private final Logger logger=Logger.getLogger(DatabaseIntrospector.class);
     
     /**

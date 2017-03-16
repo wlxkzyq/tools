@@ -32,6 +32,7 @@ import tools.mygenerator.api.dom.DefaultJavaFormatter;
 import tools.mygenerator.api.dom.DefaultXmlFormatter;
 import tools.mygenerator.dictionary.GenerateDictionary;
 import tools.mygenerator.internal.DefaultCommentGenerator;
+import tools.mygenerator.internal.NameConfirm;
 import tools.mygenerator.internal.ObjectFactory;
 import tools.mygenerator.internal.PluginAggregator;
 import tools.mygenerator.internal.db.ConnectionFactory;
@@ -102,6 +103,8 @@ public class Context {
 	 */
     private boolean overwriteEnabled;
     
+    private NameConfirm nameConfirm;
+    
 	private final Logger logger=Logger.getLogger(Context.class);
 	
 	
@@ -169,6 +172,9 @@ public class Context {
 	}
 	public void setSqlMapGeneratorConfiguration(SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration) {
 		this.sqlMapGeneratorConfiguration = sqlMapGeneratorConfiguration;
+	}
+	public NameConfirm getNameConfirm() {
+		return nameConfirm;
 	}
 
 	/**
@@ -279,6 +285,7 @@ public class Context {
     	if(pluginConfigurations==null){
     		pluginConfigurations=new ArrayList<PluginConfiguration>();
     	}
+    	nameConfirm=new NameConfirm(this);
     	introspectTables(warnings);
     	
     }

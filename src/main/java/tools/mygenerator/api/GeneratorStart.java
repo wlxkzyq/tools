@@ -13,7 +13,6 @@ import tools.mygenerator.config.JavaModelGeneratorConfiguration;
 import tools.mygenerator.config.PluginConfiguration;
 import tools.mygenerator.config.SqlMapGeneratorConfiguration;
 import tools.mygenerator.config.TableChooseConfiguration;
-import tools.mygenerator.internal.DefaultCommentGenerator;
 
 /** 
 * 生成开始方法
@@ -52,6 +51,7 @@ public class GeneratorStart {
 		Set<String> chooseTables=new HashSet<String>();
 		//chooseTables.add("t_wf_workitem");
 		chooseTables.add("t_wf_processinfo");
+		chooseTables.add("t_WF_exportcfg");
 		tc.setChooseTables(chooseTables);
 		//设置忽略表
 //		Set<String> ignoreTables=new HashSet<String>();
@@ -65,36 +65,50 @@ public class GeneratorStart {
 		
 		//以下设置生成代码相关配置
 		//======================
-		//配置java实体类生成规则
+		//======配置java实体类生成规则
 		JavaModelGeneratorConfiguration javaModelGeneratorConfiguration=new JavaModelGeneratorConfiguration();
 		javaModelGeneratorConfiguration.addProperty("trimStrings", "true");
 		javaModelGeneratorConfiguration.setTargetPackage("tools.test.entity");
 		javaModelGeneratorConfiguration.setTargetProject("D:/hhh");
+		//配置是生成实体类名否使用驼峰式命名("Y"/"N")
+		javaModelGeneratorConfiguration.addProperty("beanNameCamelCaseEnable", "Y");
+		javaModelGeneratorConfiguration.addProperty("beanFieldNameCamelCaseEnable", "N");
+		
 		context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
 		
-		//配置sqlMapper生成规则
+		//======配置sqlMapper生成规则
 		SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration=new SqlMapGeneratorConfiguration();
 		sqlMapGeneratorConfiguration.setTargetPackage("tools.test.mapper");
 		sqlMapGeneratorConfiguration.setTargetProject("D:/hhh");
+		//配置所有表生成sqlMapper时使用的别名
+		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tp");
+		//配置是否生成tableName sql("Y"/"N")
+		sqlMapGeneratorConfiguration.addProperty("generateTableNameEnable", "Y");
+		//配置是否生成tableColumns sql("Y"/"N")
+		sqlMapGeneratorConfiguration.addProperty("generateColumnsEnable", "Y");
+		//配置是否生成查询所有列 sql("Y"/"N")
+		sqlMapGeneratorConfiguration.addProperty("generateSelectAllEnable", "Y");
+		//配置参数是否使用map sql("Y"/"N")
+		sqlMapGeneratorConfiguration.addProperty("mapParamEnable", "N");
 		context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
 		
 		
-		//配置使用哪些生成器
+		//======配置使用哪些生成器
 		List<String> generators=new ArrayList<String>();
 		generators.add(GeneratorRegistry.javaEntity);
 		generators.add(GeneratorRegistry.mybatis3Mapper);
 		context.setGenerators(generators);
 		
-		//配置使用的插件
+		//======配置使用的插件
 		List<PluginConfiguration> pluginConfigurations=new ArrayList<PluginConfiguration>();
-		//==添加toStringPlugin插件
+		//添加toStringPlugin插件
 		PluginConfiguration toStringPlugin=new PluginConfiguration();
 		toStringPlugin.setConfigurationType("tools.mygenerator.plugins.ToStringPlugin");
 		pluginConfigurations.add(toStringPlugin);
 		context.setPluginConfigurations(pluginConfigurations);
 		
-		//配置生成的文件是否覆盖
-		context.setOverwriteEnabled(false);
+		//======配置生成的文件是否覆盖
+		context.setOverwriteEnabled(true);
 		
 		
 		
