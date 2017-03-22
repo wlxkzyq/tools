@@ -25,6 +25,8 @@ public class ConstantConfig {
 		columnMap.put("float", "java.lang.Float");
 		columnMap.put("double", "java.lang.Double");
 		columnMap.put("char", "java.lang.String");
+		columnMap.put("text", "java.lang.String");
+		columnMap.put("varbinary", "byte[]");
 	}
 	
 

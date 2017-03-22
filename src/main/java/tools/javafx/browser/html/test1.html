@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script type="text/javascript">
+	function dd(s){
+	
+		document.write(s)
+		
+	}
+	
+	function ff(){
+		document.write(app)
+	}
+	
+	function out(s){
+		document.getElementById("content").innerHTML=s;
+		//s.exit();
+	}
+</script>
+</head>
+<body>
+fdasf
+<input type="button" value="点击一下" onclick="dd('哇哈哈')">
+<input type="button" value="点击2下" onclick="out(app)">
+<input type="button" value="点击3下" onclick="app.login()">
+
+<a href="#" onclick="alert(123)">dfaf</a>
+
+<div id="content"></div>
+</body>
+</html>

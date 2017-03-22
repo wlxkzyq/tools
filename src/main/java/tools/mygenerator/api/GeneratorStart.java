@@ -50,8 +50,8 @@ public class GeneratorStart {
 		//设置指定表
 		Set<String> chooseTables=new HashSet<String>();
 		//chooseTables.add("t_wf_workitem");
-		chooseTables.add("t_wf_processinfo");
-		chooseTables.add("t_WF_exportcfg");
+		//chooseTables.add("t_wf_processinfo");
+		chooseTables.add("t_wf_sendccinfolog");
 		tc.setChooseTables(chooseTables);
 		//设置忽略表
 //		Set<String> ignoreTables=new HashSet<String>();
@@ -72,7 +72,7 @@ public class GeneratorStart {
 		javaModelGeneratorConfiguration.setTargetProject("D:/hhh");
 		//配置是生成实体类名否使用驼峰式命名("Y"/"N")
 		javaModelGeneratorConfiguration.addProperty("beanNameCamelCaseEnable", "Y");
-		javaModelGeneratorConfiguration.addProperty("beanFieldNameCamelCaseEnable", "N");
+		javaModelGeneratorConfiguration.addProperty("beanFieldNameCamelCaseEnable", "Y");
 		
 		context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
 		
@@ -81,7 +81,7 @@ public class GeneratorStart {
 		sqlMapGeneratorConfiguration.setTargetPackage("tools.test.mapper");
 		sqlMapGeneratorConfiguration.setTargetProject("D:/hhh");
 		//配置所有表生成sqlMapper时使用的别名
-		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tp");
+		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tb4");
 		//配置是否生成tableName sql("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("generateTableNameEnable", "Y");
 		//配置是否生成tableColumns sql("Y"/"N")
@@ -89,7 +89,7 @@ public class GeneratorStart {
 		//配置是否生成查询所有列 sql("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("generateSelectAllEnable", "Y");
 		//配置参数是否使用map sql("Y"/"N")
-		sqlMapGeneratorConfiguration.addProperty("mapParamEnable", "N");
+		sqlMapGeneratorConfiguration.addProperty("mapParamEnable", "Y");
 		context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
 		
 		
