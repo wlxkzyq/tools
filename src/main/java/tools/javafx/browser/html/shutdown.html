@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<p>这是一个有意思的玩意！！！</p>
+	
+	<div>
+		你想关机吗？想关机的话请关闭我！
+	</div>
+</body>
+<script type="text/javascript">
+
+	var firstLoad=sessionStorage.getItem("firstLoad");
+ 	if(firstLoad==null){
+		sessionStorage.setItem("firstLoad",true);
+		location.reload();
+	}
+	
+</script>
+</html>

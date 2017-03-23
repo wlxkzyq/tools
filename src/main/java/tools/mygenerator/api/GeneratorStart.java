@@ -51,7 +51,7 @@ public class GeneratorStart {
 		Set<String> chooseTables=new HashSet<String>();
 		//chooseTables.add("t_wf_workitem");
 		//chooseTables.add("t_wf_processinfo");
-		chooseTables.add("t_wf_sendccinfolog");
+		chooseTables.add("t_sr_problem_process");
 		tc.setChooseTables(chooseTables);
 		//设置忽略表
 //		Set<String> ignoreTables=new HashSet<String>();
@@ -81,7 +81,7 @@ public class GeneratorStart {
 		sqlMapGeneratorConfiguration.setTargetPackage("tools.test.mapper");
 		sqlMapGeneratorConfiguration.setTargetProject("D:/hhh");
 		//配置所有表生成sqlMapper时使用的别名
-		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tb4");
+		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tb1");
 		//配置是否生成tableName sql("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("generateTableNameEnable", "Y");
 		//配置是否生成tableColumns sql("Y"/"N")

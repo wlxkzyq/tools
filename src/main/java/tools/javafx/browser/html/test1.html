@@ -4,7 +4,31 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
+
+</head>
+<body>
+	
+
+<a href="#" onclick="ss()">dfaf</a>
+	<form action="">
+		<!-- <input type="checkbox" value="点击一下" onclick="dd('哇哈哈')">
+		<input type="checkbox" value="点击2下" onclick="out(app)">
+		<input type="checkbox" value="点击3下" onclick="app.lll()"> -->
+	</form>
+
+<button onclick="app.lll()">daf</button>
+<div id="content"></div>
+
+<a href="test2.html">test2</a>
+</body>
 <script type="text/javascript">
+
+	var firstLoad=sessionStorage.getItem("firstLoad");
+ 	if(firstLoad==null){
+		sessionStorage.setItem("firstLoad",true);
+		location.reload();
+	} 
+	
 	function dd(s){
 	
 		document.write(s)
@@ -19,16 +43,11 @@
 		document.getElementById("content").innerHTML=s;
 		//s.exit();
 	}
+	
+	function ss(){
+		
+		var n=app.lll("你好！");
+		//out(n);
+	}
 </script>
-</head>
-<body>
-fdasf
-<input type="button" value="点击一下" onclick="dd('哇哈哈')">
-<input type="button" value="点击2下" onclick="out(app)">
-<input type="button" value="点击3下" onclick="app.login()">
-
-<a href="#" onclick="alert(123)">dfaf</a>
-
-<div id="content"></div>
-</body>
 </html>

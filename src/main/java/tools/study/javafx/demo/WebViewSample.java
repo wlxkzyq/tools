@@ -89,7 +89,7 @@ public class WebViewSample extends Application {
 
 class Browser extends Region {
 
-    private final HBox toolBar;
+    //private final HBox toolBar;
     final private static String[] imageFiles = new String[]{
         "product.png",
         "blog.png",
@@ -126,111 +126,111 @@ class Browser extends Region {
         //apply the styles
         getStyleClass().add("browser");
                 
-        for (int i = 0; i < captions.length; i++) {
-            // create hyperlinks
-            Hyperlink hpl = hpls[i] = new Hyperlink(captions[i]);
-            Image image = images[i]
-                    = new Image(getClass().getResourceAsStream(imageFiles[i]));
-            hpl.setGraphic(new ImageView(image));
-            final String url = urls[i];
-            final boolean addButton = (hpl.getText().equals("Help"));  
-            
-            // process event 
-            hpl.setOnAction((ActionEvent e) -> {
-                needDocumentationButton = addButton;
-                webEngine.load(url);
-            });
-                    
-        }
+//        for (int i = 0; i < captions.length; i++) {
+//            // create hyperlinks
+//            Hyperlink hpl = hpls[i] = new Hyperlink(captions[i]);
+//            Image image = images[i]
+//                    = new Image(getClass().getResourceAsStream(imageFiles[i]));
+//            hpl.setGraphic(new ImageView(image));
+//            final String url = urls[i];
+//            final boolean addButton = (hpl.getText().equals("Help"));  
+//            
+//            // process event 
+//            hpl.setOnAction((ActionEvent e) -> {
+//                needDocumentationButton = addButton;
+//                webEngine.load(url);
+//            });
+//                    
+//        }
 
 
-        comboBox.setPrefWidth(60);
-
-        // create the toolbar
-        toolBar = new HBox();
-        toolBar.setAlignment(Pos.CENTER);
-        toolBar.getStyleClass().add("browser-toolbar");
-        toolBar.getChildren().add(comboBox);
-        toolBar.getChildren().addAll(hpls);
-        toolBar.getChildren().add(createSpacer());
+//        comboBox.setPrefWidth(60);
+//
+//        // create the toolbar
+//        toolBar = new HBox();
+//        toolBar.setAlignment(Pos.CENTER);
+//        toolBar.getStyleClass().add("browser-toolbar");
+//        toolBar.getChildren().add(comboBox);
+//        toolBar.getChildren().addAll(hpls);
+//        toolBar.getChildren().add(createSpacer());
 
         //set action for the button
-        toggleHelpTopics.setOnAction((ActionEvent t) -> {
-            webEngine.executeScript("toggle_visibility('help_topics')");
-        });
-
-        smallView.setPrefSize(120, 80);
-
-        //handle popup windows
-        webEngine.setCreatePopupHandler(
-                (PopupFeatures config) -> {
-                    smallView.setFontScale(0.8);
-                    if (!toolBar.getChildren().contains(smallView)) {
-                        toolBar.getChildren().add(smallView);
-                    }
-                    return smallView.getEngine();
-        });
+//        toggleHelpTopics.setOnAction((ActionEvent t) -> {
+//            webEngine.executeScript("toggle_visibility('help_topics')");
+//        });
+//
+//        smallView.setPrefSize(120, 80);
+//
+//        //handle popup windows
+//        webEngine.setCreatePopupHandler(
+//                (PopupFeatures config) -> {
+//                    smallView.setFontScale(0.8);
+//                    if (!toolBar.getChildren().contains(smallView)) {
+//                        toolBar.getChildren().add(smallView);
+//                    }
+//                    return smallView.getEngine();
+//        });
 
         //process history
-        final WebHistory history = webEngine.getHistory();
-        history.getEntries().addListener(
-            (Change<? extends Entry> c) -> {
-                c.next();
-                c.getRemoved().stream().forEach((e) -> {
-                comboBox.getItems().remove(e.getUrl());
-            });
-                c.getAddedSubList().stream().forEach((e) -> {
-                comboBox.getItems().add(e.getUrl());
-            });
-        });
-
-        //set the behavior for the history combobox               
-        comboBox.setOnAction((Event ev) -> {
-            int offset
-                    = comboBox.getSelectionModel().getSelectedIndex()
-                    - history.getCurrentIndex();
-            history.go(offset);
-        });
+//        final WebHistory history = webEngine.getHistory();
+//        history.getEntries().addListener(
+//            (Change<? extends Entry> c) -> {
+//                c.next();
+//                c.getRemoved().stream().forEach((e) -> {
+//                comboBox.getItems().remove(e.getUrl());
+//            });
+//                c.getAddedSubList().stream().forEach((e) -> {
+//                comboBox.getItems().add(e.getUrl());
+//            });
+//        });
+//
+//        //set the behavior for the history combobox               
+//        comboBox.setOnAction((Event ev) -> {
+//            int offset
+//                    = comboBox.getSelectionModel().getSelectedIndex()
+//                    - history.getCurrentIndex();
+//            history.go(offset);
+//        });
 
         // process page loading
         webEngine.getLoadWorker().stateProperty().addListener(
             (ObservableValue<? extends State> ov, State oldState, 
                 State newState) -> {
-                    toolBar.getChildren().remove(toggleHelpTopics);
+                   // toolBar.getChildren().remove(toggleHelpTopics);
                     if (newState == State.SUCCEEDED) {
                     	System.out.println(123);
                         JSObject win
                                 = (JSObject) webEngine.executeScript("window");
                         win.setMember("app", new JavaApp());
-                        if (needDocumentationButton) {
-                            toolBar.getChildren().add(toggleHelpTopics);
-                        }
+                       // if (needDocumentationButton) {
+                    //        toolBar.getChildren().add(toggleHelpTopics);
+                      //  }
                     }
         });
         //adding context menu
-        final ContextMenu cm = new ContextMenu();
-        MenuItem cmItem1 = new MenuItem("Print");
-        cm.getItems().add(cmItem1);
-        toolBar.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                cm.show(toolBar, e.getScreenX(), e.getScreenY());
-            }
-        });
-
-        //processing print job
-        cmItem1.setOnAction((ActionEvent e) -> {
-            PrinterJob job = PrinterJob.createPrinterJob();
-            if (job != null) {
-                webEngine.print(job);
-                job.endJob();
-            }
-        });
+//        final ContextMenu cm = new ContextMenu();
+//        MenuItem cmItem1 = new MenuItem("Print");
+//        cm.getItems().add(cmItem1);
+//        toolBar.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+//            if (e.getButton() == MouseButton.SECONDARY) {
+//                cm.show(toolBar, e.getScreenX(), e.getScreenY());
+//            }
+//        });
+//
+//        //processing print job
+//        cmItem1.setOnAction((ActionEvent e) -> {
+//            PrinterJob job = PrinterJob.createPrinterJob();
+//            if (job != null) {
+//                webEngine.print(job);
+//                job.endJob();
+//            }
+//        });
 
         // load the home page        
         webEngine.load(WebViewSample.class.getResource("help.html").toExternalForm());
 
         //add components
-        getChildren().add(toolBar);
+       // getChildren().add(toolBar);
         getChildren().add(browser);
     }
 
@@ -252,14 +252,14 @@ class Browser extends Region {
         return spacer;
     }
 
-    @Override
-    protected void layoutChildren() {
-        double w = getWidth();
-        double h = getHeight();
-        double tbHeight = toolBar.prefHeight(w);
-        layoutInArea(browser,0,0,w,h-tbHeight,0,HPos.CENTER,VPos.CENTER);
-        layoutInArea(toolBar,0,h-tbHeight,w,tbHeight,0,HPos.CENTER,VPos.CENTER);
-    }
+//    @Override
+//    protected void layoutChildren() {
+//        double w = getWidth();
+//        double h = getHeight();
+//       // double tbHeight = toolBar.prefHeight(w);
+//       // layoutInArea(browser,0,0,w,h-tbHeight,0,HPos.CENTER,VPos.CENTER);
+//       // layoutInArea(toolBar,0,h-tbHeight,w,tbHeight,0,HPos.CENTER,VPos.CENTER);
+//    }
 
     @Override
     protected double computePrefWidth(double height) {

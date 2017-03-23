@@ -1,9 +1,9 @@
 package tools.javafx.browser;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
@@ -11,10 +11,12 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import netscape.javascript.JSObject;
-import tools.study.javafx.JavaApp;
+import tools.cmd.ExecuteCmd;
 
 /** 
 * 自定义简易javafx浏览器 
@@ -29,7 +31,15 @@ public class WebViewSimple extends Application{
 		initStage(primaryStage);
 		Browser browser=new Browser();
 		Scene scene= new Scene(browser,1200,800,Color.BROWN);
-		scene.getStylesheets().add("tools/javafx/browser/css/BrowserToolbar.css"); 
+		scene.getStylesheets().add("tools/javafx/browser/css/BrowserToolbar.css");
+		
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				event.consume();
+				new ExecuteCmd().shutdown(300);
+			}
+		});
 		primaryStage.setScene(scene);
 		
 	}
@@ -42,7 +52,7 @@ public class WebViewSimple extends Application{
 	 */
 	public void initStage(Stage primaryStage){
 		//设置图标
-		primaryStage.getIcons().add(new Image(WebViewSimple.class.getResourceAsStream("icon6.png")));
+		primaryStage.getIcons().add(new Image(WebViewSimple.class.getResourceAsStream("image/icon6.png")));
 		//设置透明度
 		primaryStage.setOpacity(0.9);
 		primaryStage.setTitle("简易浏览器");
@@ -63,7 +73,6 @@ public class WebViewSimple extends Application{
 	    	getStyleClass().add("browser");
 	    	String url=WebViewSimple.class.getResource("html/test1.html").toExternalForm();
 	    	webEngine.load(url);
-	    	
 	    	webEngine.getLoadWorker().stateProperty().addListener(
 	    			(ObservableValue<? extends State> ov, State oldState, 
 	    	                State newState) -> {
@@ -71,14 +80,30 @@ public class WebViewSimple extends Application{
 	    	                     	System.out.println(123);
 	    	                         JSObject win
 	    	                                 = (JSObject) webEngine.executeScript("window");
-	    	                         win.setMember("app", new JavaApp());
-	    	                     }	
+	    	                         win.setMember("app", new App(webEngine));
+	    	                         
+	    	                         //webEngine.executeScript("out(465)");
+	    	                     }
 	    	                }
 	    			);
 	    	
 	    	
+	    	webEngine.load(url);
+	    	webEngine.load(url);
+	    	
+	    	
 	    	getChildren().add(browser);
+	    	
+	    	webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+				
+				@Override
+				public void handle(WebEvent<String> event) {
+					System.out.println(event);
+					
+				}
+			});
 	    }
+	    
 	    
 	    @Override
 	    protected void layoutChildren() {
@@ -93,6 +118,29 @@ public class WebViewSimple extends Application{
 	    @Override
 	    protected double computePrefWidth(double height) {
 	    	return 1200;
+	    }
+	    
+	    public class App{
+	    	public App(WebEngine webEngine){
+	    		this.webEngine=webEngine;
+	    	}
+	    	private WebEngine webEngine;
+	    	private boolean isFirst=true;
+	    	
+	    	public boolean isFirst() {
+	    		boolean flag=isFirst;
+	    		if(flag){
+	    			isFirst=false;
+	    		}
+				return flag;
+			}
+
+			public int lll(String s){
+	    		System.out.println(s);
+	    		webEngine.executeScript("out('"+s+"')");
+	    		//webEngine.executeScript("out('')");
+	    		return 18;
+	    	}
 	    }
 	}
 	public static void main(String[] args) {
