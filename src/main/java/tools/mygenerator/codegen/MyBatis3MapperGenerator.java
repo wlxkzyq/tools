@@ -5,6 +5,7 @@ import static tools.mygenerator.api.dom.OutputUtilities.xmlIndent;
 
 import java.util.List;
 
+import tools.common.StringUtils;
 import tools.mygenerator.api.IntrospectedColumn;
 import tools.mygenerator.api.dom.xml.Attribute;
 import tools.mygenerator.api.dom.xml.Document;
@@ -25,16 +26,23 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 	private boolean generateTableNameEnable;
 	//是否生成数据库列column Sql
 	private boolean generateColumnsEnable;
+	//是否生成普通插入 Sql
+	private boolean generateInsertEnable;
 	//是否生成查询所有sql语句
 	private boolean generateSelectAllEnable;
 	//是否使用map形式的参数
 	private boolean mapParamEnable;
 	private void init(){
 		tableAlias=this.getContext().getSqlMapGeneratorConfiguration().getProperty("tableAlias");
-		if(tableAlias==null){tableAlias="";}
+		if(!StringUtils.isEmpty(tableAlias)){
+			tableAlias="";
+		}else{
+			tableAlias=tableAlias+".";
+		}
 		generateTableNameEnable=getProperty("generateTableNameEnable");
 		generateColumnsEnable=getProperty("generateColumnsEnable");
 		generateSelectAllEnable=getProperty("generateSelectAllEnable");
+		generateInsertEnable=getProperty("generateInsertEnable");
 		mapParamEnable=getProperty("mapParamEnable");
 	}
 
@@ -89,6 +97,7 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 		getTableName(answer);
 		getSqlColumns(answer);
 		getSelectAll(answer);
+		getInsert(answer);
 		
 		return answer;
 	}
@@ -137,7 +146,6 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 			columnName=columns.get(i).getColumnName();
 			xmlIndent(content, 2);
 			content.append(tableAlias);
-			content.append(".");
 			content.append(columnName);
 			content.append("  as  ");
 			content.append(context.getNameConfirm().getBeanFieldName(columns.get(i)));
@@ -233,6 +241,76 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 		//添加内容节点
 		TextElement text=new TextElement(content.toString());
 		answer.addElement(text);
+		parent.addElement(answer);
+	}
+	
+	/**
+	 * 获取普通插入
+	 * @param parent
+	 */
+	protected void getInsert(XmlElement parent){
+		if(!generateInsertEnable){
+			return;
+		}
+		//设置注释
+		context.getCommentGenerator().addComment(parent);
+		XmlElement answer=new XmlElement("insert");
+		//设置id
+		Attribute idAttribute=new Attribute("id", "insert");
+		answer.addAttribute(idAttribute);
+		//设置入参和返回的类
+		Attribute parameterTypeAttribute;
+		if(mapParamEnable){
+			parameterTypeAttribute=new Attribute("parameterType", "java.util.Map");
+		}else{
+			String beanFullName=context.getJavaModelGeneratorConfiguration().getTargetPackage()+"."
+					+context.getNameConfirm().getBeanName(introspectedTable);
+			parameterTypeAttribute=new Attribute("parameterType", beanFullName);
+		}
+		answer.addAttribute(parameterTypeAttribute);
+		//遍历设置字段
+		StringBuilder content=new StringBuilder("");
+		content.append("insert into ");
+		newLine(content);
+		xmlIndent(content, 2);
+		content.append(getIntrospectedTable().getTableName());
+		newLine(content);
+		
+		//定义表格columns的字符串
+		StringBuilder sbColumns=new StringBuilder("(");
+		//定义values的字符串
+		StringBuilder sbValues=new StringBuilder("(");
+		newLine(sbColumns);
+		newLine(sbValues);
+		List<IntrospectedColumn> columns=getIntrospectedTable().getColumns();
+		String columnName="";
+		IntrospectedColumn column=null;
+		for (int i = 0; i < columns.size(); i++) {
+			column=columns.get(i);
+			columnName=column.getColumnName();
+			xmlIndent(sbColumns, 2);
+			sbColumns.append(columnName);
+			sbColumns.append(",");
+			newLine(sbColumns);
+			
+			xmlIndent(sbValues, 2);
+			sbValues.append("#{");
+			sbValues.append(context.getNameConfirm().getBeanFieldName(column));
+			sbValues.append("},");
+			newLine(sbValues);
+		}
+		sbColumns.delete(sbColumns.length()-3,sbColumns.length()-1);
+		sbValues.delete(sbValues.length()-3,sbValues.length()-1);
+		newLine(sbColumns);
+		newLine(sbValues);
+		sbColumns.append(")");
+		sbValues.append(")");
+		content.append(sbColumns);
+		content.append(" values ");
+		content.append(sbValues);
+		TextElement text=new TextElement(content.toString());
+		answer.addElement(text);
+		
 		parent.addElement(answer);
 	}
 	

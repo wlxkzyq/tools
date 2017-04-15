@@ -51,7 +51,7 @@ public class GeneratorStart {
 		Set<String> chooseTables=new HashSet<String>();
 		//chooseTables.add("t_wf_workitem");
 		//chooseTables.add("t_wf_processinfo");
-		chooseTables.add("t_sr_problem_process");
+		chooseTables.add("t_sr_pro_csvc_extend");
 		tc.setChooseTables(chooseTables);
 		//设置忽略表
 //		Set<String> ignoreTables=new HashSet<String>();
@@ -81,14 +81,16 @@ public class GeneratorStart {
 		sqlMapGeneratorConfiguration.setTargetPackage("tools.test.mapper");
 		sqlMapGeneratorConfiguration.setTargetProject("D:/hhh");
 		//配置所有表生成sqlMapper时使用的别名
-		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tb1");
+		sqlMapGeneratorConfiguration.addProperty("tableAlias", "tb5");
 		//配置是否生成tableName sql("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("generateTableNameEnable", "Y");
 		//配置是否生成tableColumns sql("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("generateColumnsEnable", "Y");
 		//配置是否生成查询所有列 sql("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("generateSelectAllEnable", "Y");
-		//配置参数是否使用map sql("Y"/"N")
+		//配置是否生成普通插入 sql("Y"/"N")
+		sqlMapGeneratorConfiguration.addProperty("generateInsertEnable", "Y");
+		//配置Mapper文件 <select>节点参数是否使用Map类的形式 ("Y"/"N")
 		sqlMapGeneratorConfiguration.addProperty("mapParamEnable", "Y");
 		context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
 		

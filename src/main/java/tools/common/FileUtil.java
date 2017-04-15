@@ -34,6 +34,8 @@ public class FileUtil {
 	        BufferedWriter bw = new BufferedWriter(osw);
 	        bw.write(content);
 	        bw.close();
+	        osw.close();
+	        fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("写入文件失败！！");

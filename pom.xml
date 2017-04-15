@@ -5,7 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>develop_tools</name>
   <description>开发使用工具</description>
-  
+  <packaging>jar</packaging>
   <dependencies>
   <!-- JSP相关 -->
 	<dependency>
@@ -146,6 +146,87 @@
 	    <artifactId>freemarker</artifactId>
 	    <version>2.3.23</version>
 	</dependency>
+	
+	
   </dependencies>
+  
+  <build>
+  	<plugins>
+  		<!-- java编译插件 -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.1</version>
+			<configuration>
+				<source>1.8</source>
+				<target>1.8</target>
+				<encoding>UTF-8</encoding>
+			</configuration>
+		</plugin>
+		<!-- maven打包插件 -->
+		<!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>tools.javafx.browser.WebViewSimple</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+        </plugin> -->
+        <!-- 拷贝依赖的jar包到lib目录 -->
+        <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            ${project.build.directory}是maven变量，内置的，表示target目录,如果不写，将在跟目录下创建/lib
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            excludeTransitive:是否不包含间接依赖包，比如我们依赖A，但是A又依赖了B，我们是否也要把B打进去 默认不打
+                            <excludeTransitive>true</excludeTransitive>
+                            复制的jar文件去掉版本信息
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+        </plugin> -->
+        
+        <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.think.TestMain</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assembly</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
+  	</plugins>
+  </build>
 
 </project>

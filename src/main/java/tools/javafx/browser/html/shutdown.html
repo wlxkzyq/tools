@@ -3,13 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+<style type="text/css">
+	a{
+		text-decoration: none;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
 </head>
 <body>
 	<p>这是一个有意思的玩意！！！</p>
 	
 	<div>
 		你想关机吗？想关机的话请关闭我！
+		
 	</div>
+	<div>
+		不想关机就这样吧！		
+	</div>
+	<div>
+		<a href="" onclick="app.shutdownCancel()">　　</a>
+				
+	</div>
+	输入秒：<input type="number"  id="seconds">
+	<a href="" onclick="shutdown()">　　</a>
 </body>
 <script type="text/javascript">
 
@@ -18,6 +46,12 @@
 		sessionStorage.setItem("firstLoad",true);
 		location.reload();
 	}
+ 	
+ 	function shutdown(){
+ 		var s=document.getElementById("seconds").value;
+ 		alert(s);
+ 		app.shutdown(s);
+ 	}
 	
 </script>
 </html>

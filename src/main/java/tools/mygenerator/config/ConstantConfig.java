@@ -20,6 +20,7 @@ public class ConstantConfig {
 		columnMap.put("timestamp", "java.util.Date");
 		columnMap.put("bigint", "java.lang.Long");
 		columnMap.put("tinyint", "java.lang.Byte");
+		columnMap.put("bit", "java.lang.Byte");
 		columnMap.put("smallint", "java.lang.Short");
 		columnMap.put("int", "java.lang.Integer");
 		columnMap.put("float", "java.lang.Float");

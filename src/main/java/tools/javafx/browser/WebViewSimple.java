@@ -1,5 +1,7 @@
 package tools.javafx.browser;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
@@ -7,6 +9,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -16,6 +20,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import netscape.javascript.JSObject;
+import tools.cmd.CmdConstants;
 import tools.cmd.ExecuteCmd;
 
 /** 
@@ -36,10 +41,10 @@ public class WebViewSimple extends Application{
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				event.consume();
-				new ExecuteCmd().shutdown(300);
+				//TODO
 			}
 		});
+		
 		primaryStage.setScene(scene);
 		
 	}
@@ -57,7 +62,7 @@ public class WebViewSimple extends Application{
 		primaryStage.setOpacity(0.9);
 		primaryStage.setTitle("简易浏览器");
 		//设置始终显示在其他窗口之上
-		primaryStage.setAlwaysOnTop(true);
+		//primaryStage.setAlwaysOnTop(true);
 		primaryStage.centerOnScreen();
 		
 		primaryStage.setWidth(1200);
@@ -71,13 +76,12 @@ public class WebViewSimple extends Application{
 	    //构造方法
 	    public Browser() {
 	    	getStyleClass().add("browser");
-	    	String url=WebViewSimple.class.getResource("html/test1.html").toExternalForm();
-	    	webEngine.load(url);
+	    	String url=WebViewSimple.class.getResource("html/generator.html").toExternalForm();
+	    	//webEngine.load(url);
 	    	webEngine.getLoadWorker().stateProperty().addListener(
 	    			(ObservableValue<? extends State> ov, State oldState, 
 	    	                State newState) -> {
 	    	                	 if (newState == State.SUCCEEDED) {
-	    	                     	System.out.println(123);
 	    	                         JSObject win
 	    	                                 = (JSObject) webEngine.executeScript("window");
 	    	                         win.setMember("app", new App(webEngine));
@@ -94,11 +98,18 @@ public class WebViewSimple extends Application{
 	    	
 	    	getChildren().add(browser);
 	    	
+	    	/**
+	    	 * 设置浏览器alert()方法执行
+	    	 */
 	    	webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
 				
 				@Override
 				public void handle(WebEvent<String> event) {
-					System.out.println(event);
+					Alert alert=new Alert(AlertType.INFORMATION);
+//					alert.setTitle("这是title");
+//					alert.setHeaderText("这是headerText");
+					alert.setContentText(event.getData());
+					alert.showAndWait();
 					
 				}
 			});
@@ -127,13 +138,6 @@ public class WebViewSimple extends Application{
 	    	private WebEngine webEngine;
 	    	private boolean isFirst=true;
 	    	
-	    	public boolean isFirst() {
-	    		boolean flag=isFirst;
-	    		if(flag){
-	    			isFirst=false;
-	    		}
-				return flag;
-			}
 
 			public int lll(String s){
 	    		System.out.println(s);
@@ -141,6 +145,13 @@ public class WebViewSimple extends Application{
 	    		//webEngine.executeScript("out('')");
 	    		return 18;
 	    	}
+			
+			public void shutdownCancel(){
+				new ExecuteCmd().exec(CmdConstants.shutdownCancel);
+			}
+			public void shutdown(int seconds){
+				new ExecuteCmd().shutdown(seconds);
+			}
 	    }
 	}
 	public static void main(String[] args) {

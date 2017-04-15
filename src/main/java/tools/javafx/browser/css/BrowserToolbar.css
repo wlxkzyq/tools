@@ -1,6 +1,6 @@
 .browser{
-    -fx-background-color: #666970;
-    -fx-border-color:red;
+    /* -fx-background-color: #666970;
+    -fx-border-color:red; */
     
 }
 .browser-toolbar .hyperlink, .browser-toolbar .button, .browser-toolbar{

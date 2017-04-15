@@ -343,6 +343,7 @@ public class GenerateDictionary {
 				cell.setCellValue(column.getColumnName());
 				cell.setCellStyle(nowStyle);
 				
+				//字段类型
 				cell=row.createCell(5);
 				StringBuilder sb=new StringBuilder(column.getTypeName().toLowerCase());
 				if(sb.toString().equals("double")||sb.toString().equals("float")){
@@ -354,14 +355,17 @@ public class GenerateDictionary {
 				cell.setCellValue(sb.toString());
 				cell.setCellStyle(nowStyle);
 				
+				//是否可空
 				cell=row.createCell(6);
 				cell.setCellValue(column.getNullable()==0?"flase":"true");
 				cell.setCellStyle(nowStyle);
 				
+				//默认值
 				cell=row.createCell(7);
 				cell.setCellValue(column.getDefaultValue());
 				cell.setCellStyle(nowStyle);
 				
+				//取值范围
 				cell=row.createCell(8);
 				cell.setCellValue("");
 				cell.setCellStyle(nowStyle);

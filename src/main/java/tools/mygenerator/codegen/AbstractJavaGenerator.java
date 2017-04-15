@@ -114,9 +114,9 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator{
      * @return
      */
     private FullyQualifiedJavaType getFieldType(IntrospectedColumn introspectedColumn){
-    	
     	FullyQualifiedJavaType fqjt=new FullyQualifiedJavaType(
     			ConstantConfig.columnMap.get(introspectedColumn.getTypeName().toLowerCase()));
+    	
     	
     	return fqjt;
     }

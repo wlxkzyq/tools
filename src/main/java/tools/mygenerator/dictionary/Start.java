@@ -46,14 +46,14 @@ public class Start {
 		tc.setNameLike("%");
 		
 		//设置指定表
-//		Set<String> chooseTables=new HashSet<String>();
-//		chooseTables.add("test");
+		Set<String> chooseTables=new HashSet<String>();
+		chooseTables.add("t_sr_problem_process");
 //		chooseTables.add("user");
-//		tc.setChooseTables(chooseTables);
+		tc.setChooseTables(chooseTables);
 		//设置忽略表
-//		Set<String> ignoreTables=new HashSet<String>();
+		Set<String> ignoreTables=new HashSet<String>();
 //		ignoreTables.add("test");
-//		tc.setIgnoredTables(ignoreTables);
+		tc.setIgnoredTables(ignoreTables);
 		
 		Context context=new Context();
 		context.setJdbcConnectionConfiguration(c);
