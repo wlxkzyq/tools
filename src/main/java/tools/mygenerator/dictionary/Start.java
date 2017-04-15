@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import tools.common.PathUtil;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.config.Context;
@@ -67,6 +69,7 @@ public class Start {
 		FileInputStream fis=new FileInputStream(PathUtil.getClassPath()+"generator"+File.separator+"dictionary_temp.xls");
     	GenerateDictionary gd=new GenerateDictionary(fis);
     	gd.generateDictionary("d://jjj2.xls", list);
+    	
 	}
 
 }

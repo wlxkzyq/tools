@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>代码构建器</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<style type="text/css">
+	body{
+		margin: 0px;
+		padding: 0px;
+		background-image: url("../image/background.jpg");
+	}
+	.connection{
+		
+	}
+	
+</style>
+
+</head>
+<body>
+	<div class="connection">
+		<form id="connectionForm">
+			<table>
+				<tr>
+					<td>使用jar包:</td>
+					<td><input type="file" id="jarPath" name="jarPath"></td>
+				</tr>
+				<tr>
+					<td>数据库地址:</td>
+					<td><input type="text" id="address" name="address"></td>
+				</tr>
+				<tr>
+					<td>用户名:</td>
+					<td><input type="text" id="user" name="user"></td>
+				</tr>
+				<tr>
+					<td>密码:</td>
+					<td><input type="text" id="pwd" name="pwd"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input type="submit" id="submit" value="获取数据库信息"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+
+<script type="text/javascript">
+	$("#submit").click(function(){
+		var params=$("#connectionForm").serialize();
+	});
+	
+	$.get("shutdown.html",function(data){
+		alert(1234);
+		alert(data);
+	});
+</script>
+</html>
