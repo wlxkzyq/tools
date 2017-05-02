@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 
 import com.sun.xml.internal.bind.v2.TODO;
 
-import tools.common.PathUtil;
 import tools.mygenerator.api.CommentGenerator;
 import tools.mygenerator.api.GeneratedJavaFile;
 import tools.mygenerator.api.GeneratedXmlFile;
@@ -37,6 +36,7 @@ import tools.mygenerator.internal.ObjectFactory;
 import tools.mygenerator.internal.PluginAggregator;
 import tools.mygenerator.internal.db.ConnectionFactory;
 import tools.mygenerator.internal.db.DatabaseIntrospector;
+import tools.pub.PathUtil;
 
 
 /** 

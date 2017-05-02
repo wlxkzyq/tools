@@ -10,12 +10,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import tools.common.PathUtil;
 import tools.mygenerator.api.IntrospectedColumn;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.config.Context;
 import tools.mygenerator.config.JDBCConnectionConfiguration;
 import tools.mygenerator.config.TableChooseConfiguration;
+import tools.pub.PathUtil;
 
 /** 
 * 获取数据库信息后做其它操作 

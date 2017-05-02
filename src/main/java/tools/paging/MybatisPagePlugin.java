@@ -31,7 +31,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.log4j.Logger;
 
-import tools.common.ReflectHelper;
+import tools.pub.ReflectHelper;
 
 
 /** 

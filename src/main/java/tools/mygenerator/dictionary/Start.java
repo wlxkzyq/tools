@@ -12,11 +12,11 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import tools.common.PathUtil;
 import tools.mygenerator.api.IntrospectedTable;
 import tools.mygenerator.config.Context;
 import tools.mygenerator.config.JDBCConnectionConfiguration;
 import tools.mygenerator.config.TableChooseConfiguration;
+import tools.pub.PathUtil;
 
 /** 
 * 生成数据字典开始类

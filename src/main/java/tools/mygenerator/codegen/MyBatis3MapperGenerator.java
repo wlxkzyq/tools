@@ -5,13 +5,13 @@ import static tools.mygenerator.api.dom.OutputUtilities.xmlIndent;
 
 import java.util.List;
 
-import tools.common.StringUtils;
 import tools.mygenerator.api.IntrospectedColumn;
 import tools.mygenerator.api.dom.xml.Attribute;
 import tools.mygenerator.api.dom.xml.Document;
 import tools.mygenerator.api.dom.xml.TextElement;
 import tools.mygenerator.api.dom.xml.XmlElement;
 import tools.mygenerator.internal.util.JavaBeansUtil;
+import tools.pub.StringUtils;
 
 /** 
 * mybatis3 sqlMapper生成器

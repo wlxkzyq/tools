@@ -9,7 +9,7 @@ import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
 
-import tools.common.PathUtil;
+import tools.pub.PathUtil;
 
 /** 
 * generator 运行初始类

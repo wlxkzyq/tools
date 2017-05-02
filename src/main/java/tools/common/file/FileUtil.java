@@ -1,4 +1,4 @@
-package tools.common;
+package tools.common.file;
 
 import java.io.BufferedWriter;
 import java.io.File;

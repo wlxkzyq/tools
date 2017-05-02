@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import static tools.mygenerator.internal.util.messages.Messages.getString;
 
-import tools.common.FileUtil;
+import tools.common.file.FileUtil;
 import tools.mygenerator.config.Context;
 
 /** 
