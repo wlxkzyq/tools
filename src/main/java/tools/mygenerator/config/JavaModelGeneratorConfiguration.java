@@ -19,7 +19,18 @@ public class JavaModelGeneratorConfiguration  extends PropertyHolder {
     private String targetPackage;
 
     private String targetProject;
+    
+    /**
+     * 类名前缀
+     */
+    private String classNamePrefix; 
 
+    /**
+     * 类名后缀
+     */
+    private String classNameSuffix;
+    
+    
     /**
      * 
      */
@@ -43,7 +54,25 @@ public class JavaModelGeneratorConfiguration  extends PropertyHolder {
         this.targetPackage = targetPackage;
     }
 
-    public XmlElement toXmlElement() {
+    
+    public String getClassNamePrefix() {
+		return classNamePrefix;
+	}
+
+	public void setClassNamePrefix(String classNamePrefix) {
+		this.classNamePrefix = classNamePrefix;
+	}
+
+	public String getClassNameSuffi() {
+		return classNameSuffix;
+	}
+
+	public void setClassNameSuffix(String classNameSuffix) {
+		this.classNameSuffix = classNameSuffix;
+	}
+
+
+	public XmlElement toXmlElement() {
         XmlElement answer = new XmlElement("javaModelGenerator"); //$NON-NLS-1$
 
         if (targetPackage != null) {

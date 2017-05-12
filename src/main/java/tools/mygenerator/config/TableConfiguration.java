@@ -10,11 +10,18 @@ import java.util.Set;
 */
 public class TableConfiguration {
 	
+	/**
+	 * 被忽略的列，输入值时必须使用小写
+	 */
 	private Set<String> ignoredColumns;
 	private String catalog;
     private String schema;
     private String tableName;
     
+    /**
+     * 生成实体类配置
+     */
+    private JavaModelGeneratorConfiguration javaModelGeneratorConfiguration;
     
     
 	public Set<String> getIgnoredColumns() {
@@ -40,6 +47,12 @@ public class TableConfiguration {
 	}
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+	public JavaModelGeneratorConfiguration getJavaModelGeneratorConfiguration() {
+		return javaModelGeneratorConfiguration;
+	}
+	public void setJavaModelGeneratorConfiguration(JavaModelGeneratorConfiguration javaModelGeneratorConfiguration) {
+		this.javaModelGeneratorConfiguration = javaModelGeneratorConfiguration;
 	}
     
     

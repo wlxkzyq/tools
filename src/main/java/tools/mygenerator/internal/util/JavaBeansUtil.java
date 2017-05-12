@@ -2,7 +2,9 @@ package tools.mygenerator.internal.util;
 
 import java.util.Locale;
 
+import tools.mygenerator.api.IntrospectedColumn;
 import tools.mygenerator.api.dom.java.FullyQualifiedJavaType;
+import tools.mygenerator.config.ConstantConfig;
 
 
 /** 
@@ -151,5 +153,16 @@ public class JavaBeansUtil {
         }
 
         return answer;
+    }
+    /**
+     * 自己添加
+     * 根据数据库列获取FullyQualifiedJavaType
+     * @param introspectedColumn
+     * @return
+     */
+    public static FullyQualifiedJavaType getFieldType(IntrospectedColumn introspectedColumn){
+    	FullyQualifiedJavaType fqjt=new FullyQualifiedJavaType(
+    			ConstantConfig.columnMap.get(introspectedColumn.getTypeName().toLowerCase()));
+    	return fqjt;
     }
 }

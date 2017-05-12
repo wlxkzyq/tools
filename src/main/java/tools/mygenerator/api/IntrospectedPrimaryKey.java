@@ -1,6 +1,6 @@
 package tools.mygenerator.api;
 /** 
-* 类说明 
+* 主键
 * @author 作者 : zyq
 * 创建时间：2016年12月17日 下午3:46:56 
 * @version 

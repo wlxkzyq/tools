@@ -13,13 +13,11 @@ import tools.mygenerator.internal.util.JavaBeansUtil;
 */
 public class NameConfirm {
 	
-	private boolean beanNameCamelCaseEnable;
-	private boolean beanFieldNameCamelCaseEnable;
+	private boolean globalNameCamelCaseEnable;
 	private Context context;
 	public NameConfirm(Context context) {
 		this.context=context;
-		beanNameCamelCaseEnable=getProperty("beanNameCamelCaseEnable");
-		beanFieldNameCamelCaseEnable=getProperty("beanFieldNameCamelCaseEnable");
+		globalNameCamelCaseEnable=this.context.isGlobalNameCamelCaseEnable();
 	}
 	
 	/**
@@ -31,7 +29,7 @@ public class NameConfirm {
 	 * @return
 	 */
 	public String getBeanName(IntrospectedTable table){
-		if(beanNameCamelCaseEnable){
+		if(globalNameCamelCaseEnable){
 			return JavaBeansUtil.getCamelCaseString(table.getTableName(), true);
 		}else{
 			String tableName=table.getTableName();
@@ -41,35 +39,31 @@ public class NameConfirm {
 	
 	/**
 	 * 数据库表的列生成实体类时 对应的field 名字生成
-	 * 如果beanFieldNameCamelCaseEnable 为'Y'||null 采用首字母小写的驼峰式命名
+	 * 如果beanFieldNameCamelCaseEnable 为{@code true} 采用首字母小写的驼峰式命名
 	 * 如果为否，全部使用小写
 	 * @param context
 	 * @param column
 	 * @return
 	 */
 	public String getBeanFieldName(IntrospectedColumn column){
-		if(beanFieldNameCamelCaseEnable){
+		if(globalNameCamelCaseEnable){
 			return JavaBeansUtil.getCamelCaseString(column.getColumnName(), false);
 		}else{
 			return column.getColumnName().toLowerCase();
 		}
 	}
+	
 	/**
-	 * 获取配置信息（只获取值为是否类型的）
-	 * @param key
+	 * 根据数据库字段名获取实体类字段名
+	 * 如果全局配置 beanFieldNameCamelCaseEnable 为{@code true} 采用首字母小写的驼峰式命名
+	 * @param column
 	 * @return
 	 */
-	private boolean getProperty(String key){
-		String value=context.getJavaModelGeneratorConfiguration().getProperty(key);
-		if(value==null||"Y".equals(value)){
-			return true;
+	public String getBeanFieldName(String column){
+		if(globalNameCamelCaseEnable){
+			return JavaBeansUtil.getCamelCaseString(column, false);
 		}else{
-			return false;
+			return column.toLowerCase();
 		}
-	}
-	public static void main(String[] args) {
-		String tableName="Dsfa";
-		String a= Character.toUpperCase(tableName.charAt(0))+tableName.substring(1);
-		System.out.println(a);
 	}
 }

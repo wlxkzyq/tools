@@ -52,8 +52,11 @@ public class GenerateConfirm {
 			mg.setIntrospectedTable(table);
 			mg.setWarnings(warnings);
 			Document document=mg.getDocument();
-			GeneratedXmlFile gxf=new GeneratedXmlFile(document, 
-					JavaBeansUtil.getCamelCaseString(table.getTableName(), true)+"Mapper.xml",
+			GeneratedXmlFile gxf=new GeneratedXmlFile(document,
+					context.getSqlMapGeneratorConfiguration().getFileNamePrefix()+
+					context.getNameConfirm().getBeanName(table)+
+					context.getSqlMapGeneratorConfiguration().getFileNameSuffi()+
+					".xml",
 					context.getSqlMapGeneratorConfiguration().getTargetPackage(),
 					context.getSqlMapGeneratorConfiguration().getTargetProject(),
 					false, context.getXmlFormatter());

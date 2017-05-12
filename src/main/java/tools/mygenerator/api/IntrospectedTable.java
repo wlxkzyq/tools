@@ -1,5 +1,6 @@
 package tools.mygenerator.api;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -79,6 +80,24 @@ public class IntrospectedTable {
 	}
 	public void setForeignKeys(Set<IntrospectedForeignKey> foreignKeys) {
 		this.foreignKeys = foreignKeys;
+	}
+	
+	//获取主键列
+	public IntrospectedColumn getFirstPrimaryKey(){
+		Iterator<IntrospectedPrimaryKey> iterator = primaryKeys.iterator();
+		while (iterator.hasNext()) {
+			IntrospectedPrimaryKey introspectedPrimaryKey=iterator.next();
+			if(introspectedPrimaryKey.getKeySeq()==1){
+				String name=introspectedPrimaryKey.getColumnName();
+				for (int i = 0; i < columns.size(); i++) {
+					if(name.equals(columns.get(i).getColumnName())){
+						return columns.get(i);
+					}
+				}
+				
+			}
+		}
+		return null;
 	}
 
 }

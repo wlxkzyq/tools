@@ -31,7 +31,9 @@ public class JavaEntityGenerator extends AbstractJavaGenerator{
 				context.getJavaModelGeneratorConfiguration();
 		String targetPackage=javaModelGeneratorConfiguration.getTargetPackage();
 		FullyQualifiedJavaType type = new FullyQualifiedJavaType(targetPackage+"."+
-				context.getNameConfirm().getBeanName( introspectedTable ));
+				javaModelGeneratorConfiguration.getClassNamePrefix()+
+				context.getNameConfirm().getBeanName( introspectedTable )
+				+javaModelGeneratorConfiguration.getClassNameSuffi());
 		TopLevelClass topLevelClass = new TopLevelClass(type);
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(topLevelClass);

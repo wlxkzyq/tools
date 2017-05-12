@@ -46,4 +46,15 @@ public class PropertyRegistry {
 
 	    public static final String COMMENT_GENERATOR_SUPPRESS_DATE = "suppressDate"; //$NON-NLS-1$
 	    public static final String COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS = "suppressAllComments"; //$NON-NLS-1$
+	    
+	    public static final String MAPPER_SELECTBYCONDITION_ID_PREFIX = "selectByConditionIdPrefix";
+	    public static final String MAPPER_SELECTBYCONDITION_ID_SUFFIX = "selectByConditionIdSuffix";
+	    
+	    public static final String MAPPER_SELECTBYPRIMARYKEY_ID_PREFIX = "selectByPrimaryKeyIdPrefix";
+	    public static final String MAPPER_SELECTBYPRIMARYKEY_ID_SUFFIX = "selectByPrimaryKeyIdSuffix";
+	   
+	    public static final String MAPPER_WHERE_CONDITION_NULL = "whereConditionNull";
+	    public static final String MAPPER_WHERE_CONDITION_DEFAULT = "whereConditionDefault";
+	    public static final String MAPPER_WHERE_CONDITION_STATIC = "whereConditionStatic";
+	    public static final String MAPPER_WHERE_CONDITION_DYNAMIC = "whereConditionDynamic";
 }

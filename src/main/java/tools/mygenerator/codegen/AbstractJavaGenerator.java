@@ -19,6 +19,7 @@ import tools.mygenerator.api.dom.java.TopLevelClass;
 import tools.mygenerator.config.ConstantConfig;
 import tools.mygenerator.config.PropertyRegistry;
 import tools.mygenerator.internal.NameConfirm;
+import tools.mygenerator.internal.util.JavaBeansUtil;
 
 /** 
 * java类 生成器 抽象类
@@ -48,14 +49,14 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator{
     	String property = context.getNameConfirm().getBeanFieldName( introspectedColumn );
         Field field = new Field();
         field.setVisibility(JavaVisibility.PRIVATE);
-        field.setType(getFieldType(introspectedColumn));
+        field.setType(JavaBeansUtil.getFieldType(introspectedColumn));
         field.setName(property);
         context.getCommentGenerator().addFieldComment(field,
                 introspectedTable, introspectedColumn);
         return field;
     }
     public Method getJavaBeansGetter(IntrospectedColumn introspectedColumn) {
-        FullyQualifiedJavaType fqjt = getFieldType(introspectedColumn);
+        FullyQualifiedJavaType fqjt = JavaBeansUtil.getFieldType(introspectedColumn);
         String property = getCamelCaseString(introspectedColumn.getColumnName(),false);
 
         Method method = new Method();
@@ -75,7 +76,7 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator{
     }
 
     public Method getJavaBeansSetter(IntrospectedColumn introspectedColumn) {
-        FullyQualifiedJavaType fqjt = getFieldType(introspectedColumn);
+        FullyQualifiedJavaType fqjt = JavaBeansUtil.getFieldType(introspectedColumn);
         String property = getCamelCaseString(introspectedColumn.getColumnName(),false);
 
         Method method = new Method();
@@ -113,13 +114,13 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator{
      * @param introspectedColumn
      * @return
      */
-    private FullyQualifiedJavaType getFieldType(IntrospectedColumn introspectedColumn){
-    	FullyQualifiedJavaType fqjt=new FullyQualifiedJavaType(
-    			ConstantConfig.columnMap.get(introspectedColumn.getTypeName().toLowerCase()));
-    	
-    	
-    	return fqjt;
-    }
+//    private FullyQualifiedJavaType getFieldType(IntrospectedColumn introspectedColumn){
+//    	FullyQualifiedJavaType fqjt=new FullyQualifiedJavaType(
+//    			ConstantConfig.columnMap.get(introspectedColumn.getTypeName().toLowerCase()));
+//    	
+//    	
+//    	return fqjt;
+//    }
     
     /**
      * 根据配置获取是否对字符串进行 trim() 方法

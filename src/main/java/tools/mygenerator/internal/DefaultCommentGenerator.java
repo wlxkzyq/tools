@@ -71,7 +71,22 @@ public class DefaultCommentGenerator implements CommentGenerator{
             sb.append('.');
             xmlElement.addElement(new TextElement(sb.toString()));
         }
+        xmlElement.addElement(new TextElement("-->")); //$NON-NLS-1$
+    }
+    
+    /**
+     * 向xml添加指定的注释
+     * @param xmlElement
+     * @param content	注释的内容
+     */
+    public void addComment(XmlElement xmlElement,String content) {
+        if (suppressAllComments) {
+            return;
+        }
 
+        xmlElement.addElement(new TextElement("<!--")); //$NON-NLS-1$
+        
+        xmlElement.addElement(new TextElement("  "+content));
         xmlElement.addElement(new TextElement("-->")); //$NON-NLS-1$
     }
 

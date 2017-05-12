@@ -5,6 +5,9 @@ import static tools.mygenerator.internal.util.messages.Messages.getString;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import tools.mygenerator.api.dom.xml.Attribute;
 import tools.mygenerator.api.dom.xml.XmlElement;
 
@@ -19,6 +22,18 @@ public class SqlMapGeneratorConfiguration extends PropertyHolder {
 	private String targetPackage;
 
     private String targetProject;
+    
+    /**
+     * 文件名前缀
+     */
+    private String fileNamePrefix; 
+
+    /**
+     * 文件名后缀
+     */
+    private String fileNameSuffi;
+    
+    private JSONObject condition;
 
     /**
 	 *  
@@ -42,8 +57,33 @@ public class SqlMapGeneratorConfiguration extends PropertyHolder {
     public void setTargetPackage(String targetPackage) {
         this.targetPackage = targetPackage;
     }
+    
 
-    public XmlElement toXmlElement() {
+    public String getFileNamePrefix() {
+		return fileNamePrefix;
+	}
+
+	public void setFileNamePrefix(String fileNamePrefix) {
+		this.fileNamePrefix = fileNamePrefix;
+	}
+
+	public String getFileNameSuffi() {
+		return fileNameSuffi;
+	}
+
+	public void setFileNameSuffi(String fileNameSuffi) {
+		this.fileNameSuffi = fileNameSuffi;
+	}
+
+	public JSONObject getCondition() {
+		return condition;
+	}
+
+	public void setCondition(JSONObject condition) {
+		this.condition = condition;
+	}
+
+	public XmlElement toXmlElement() {
         XmlElement answer = new XmlElement("sqlMapGenerator"); //$NON-NLS-1$
 
         if (targetPackage != null) {

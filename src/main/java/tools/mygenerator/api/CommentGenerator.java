@@ -91,6 +91,13 @@ public interface CommentGenerator {
      * @param xmlElement
      */
     public void addComment(XmlElement xmlElement);
+    
+    /**
+     * 向xml添加指定的注释
+     * @param xmlElement
+     * @param content	注释的内容
+     */
+    public void addComment(XmlElement xmlElement,String content);
 
     /**
      * This method is called to add a comment as the first child of the root

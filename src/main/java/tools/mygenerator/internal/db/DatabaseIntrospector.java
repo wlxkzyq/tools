@@ -41,10 +41,11 @@ public class DatabaseIntrospector {
      * @param tc	表选择配置
      * @param warnings	警告信息存储
      * @param map	表配置map（key：表名，value：表配置）
+     * @param tableConfiguration	全局表配置
      * @return
      * @throws SQLException
      */
-    public List<IntrospectedTable> introspectTables(TableChooseConfiguration tc,List<String> warnings,Map<String,TableConfiguration> map) throws SQLException{
+    public List<IntrospectedTable> introspectTables(TableChooseConfiguration tc,List<String> warnings,Map<String,TableConfiguration> map,TableConfiguration tableConfiguration) throws SQLException{
     	List<IntrospectedTable> introspectedTables=new ArrayList<IntrospectedTable>();
     	Set<String> chooseTables=tc.getChooseTables();
     	IntrospectedTable table=null;
@@ -58,6 +59,7 @@ public class DatabaseIntrospector {
     		String tableName="";
     		while (iterator.hasNext()) {
     			tableName=iterator.next();
+    			tableName=tableName.toLowerCase();
     			current++;
     			logger.debug("正在读取第   "+current+"   个表，表名："+tableName);
     			if(tc.getIgnoredTables()!=null&&tc.getIgnoredTables().contains(tableName)){
@@ -76,7 +78,7 @@ public class DatabaseIntrospector {
 					fillForeignKey(table);
 					//赋值主键
 					fillPrimaryKey(table);
-					fillColumns(table,map!=null?map.get(tableName):null);
+					fillColumns(table,map!=null?map.get(tableName):tableConfiguration);
 					//如果注释没有查询到
 					if(!stringHasValue(table.getRemarks())){
 						table.setRemarks(getTableRemark(tableName));
@@ -92,6 +94,7 @@ public class DatabaseIntrospector {
     		String tableName="";
     		while (resultSet.next()) {
     			tableName=resultSet.getString("TABLE_NAME");
+    			tableName=tableName.toLowerCase();
     			current++;
     			logger.debug("正在读取第   "+current+"   个表，表名："+tableName);
     			if(tc.getIgnoredTables()!=null&&tc.getIgnoredTables().contains(tableName)){
@@ -106,7 +109,7 @@ public class DatabaseIntrospector {
 				fillForeignKey(table);
 				//赋值主键
 				fillPrimaryKey(table);
-				fillColumns(table,map!=null?map.get(tableName):null);
+				fillColumns(table,map!=null?map.get(tableName):tableConfiguration);
 				//如果注释没有查询到
 				if(!stringHasValue(table.getRemarks())){
 					table.setRemarks(getTableRemark(tableName));
@@ -196,10 +199,10 @@ public class DatabaseIntrospector {
     	
     	while (resultSet.next()) {
     		//如果该列被忽略
-    		if(ignoreColumns!=null&&ignoreColumns.contains(resultSet.getString("COLUMN_NAME")))continue;
+    		if(ignoreColumns!=null&&ignoreColumns.contains(resultSet.getString("COLUMN_NAME").toLowerCase()))continue;
     		
     		column=new IntrospectedColumn();
-    		column.setColumnName(resultSet.getString("COLUMN_NAME"));
+    		column.setColumnName(resultSet.getString("COLUMN_NAME").toLowerCase());
     		column.setColumnSize(resultSet.getInt("COLUMN_SIZE"));
     		column.setDataType(resultSet.getInt("DATA_TYPE"));
     		column.setDecimalDigits(resultSet.getInt("DECIMAL_DIGITS"));

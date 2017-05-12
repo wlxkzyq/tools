@@ -4,12 +4,20 @@ import static tools.mygenerator.api.dom.OutputUtilities.newLine;
 import static tools.mygenerator.api.dom.OutputUtilities.xmlIndent;
 
 import java.util.List;
+import java.util.Properties;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import tools.mygenerator.api.IntrospectedColumn;
+import tools.mygenerator.api.dom.java.FullyQualifiedJavaType;
 import tools.mygenerator.api.dom.xml.Attribute;
 import tools.mygenerator.api.dom.xml.Document;
 import tools.mygenerator.api.dom.xml.TextElement;
 import tools.mygenerator.api.dom.xml.XmlElement;
+import tools.mygenerator.config.PropertyRegistry;
+import tools.mygenerator.internal.NameConfirm;
 import tools.mygenerator.internal.util.JavaBeansUtil;
 import tools.pub.StringUtils;
 
@@ -28,22 +36,34 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 	private boolean generateColumnsEnable;
 	//是否生成普通插入 Sql
 	private boolean generateInsertEnable;
-	//是否生成查询所有sql语句
-	private boolean generateSelectAllEnable;
+	//是否生成通过条件查询<select>语句
+	private boolean generateSelectByConditionEnable;
+	//是否生成通过主键查询<select>语句
+	private boolean generateSelectByPrimaryKeyEnable;
 	//是否使用map形式的参数
 	private boolean mapParamEnable;
+	//Mapper文件 <where>节点条件形式
+	private String mapperWhereCondition;
+	
+	private Properties properties;
+	
+	private NameConfirm nameConfirm;
 	private void init(){
-		tableAlias=this.getContext().getSqlMapGeneratorConfiguration().getProperty("tableAlias");
-		if(!StringUtils.isEmpty(tableAlias)){
+		nameConfirm=this.getContext().getNameConfirm();
+		properties=this.getContext().getSqlMapGeneratorConfiguration().getProperties();
+		tableAlias=properties.getProperty("tableAlias");
+		if(StringUtils.isEmpty(tableAlias)){
 			tableAlias="";
 		}else{
 			tableAlias=tableAlias+".";
 		}
 		generateTableNameEnable=getProperty("generateTableNameEnable");
 		generateColumnsEnable=getProperty("generateColumnsEnable");
-		generateSelectAllEnable=getProperty("generateSelectAllEnable");
+		generateSelectByConditionEnable=getProperty("generateSelectByConditionEnable");
+		generateSelectByPrimaryKeyEnable=getProperty("generateSelectByPrimaryKeyEnable");
 		generateInsertEnable=getProperty("generateInsertEnable");
 		mapParamEnable=getProperty("mapParamEnable");
+		mapperWhereCondition=properties.getProperty("mapperWhereCondition");
 	}
 
 	@Override
@@ -93,12 +113,16 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 		addComment(answer, dateString);
 		
 		
-		//添加sql节点
+		//添加表名节点
 		getTableName(answer);
+		//添加所有列节点
 		getSqlColumns(answer);
-		getSelectAll(answer);
+		//添加根据条件查询
+		getSelectByCondition(answer);
+		//添加根据第一个主键查询
+		getSelectByPrimaryKey(answer);
+		//添加插入
 		getInsert(answer);
-		
 		return answer;
 	}
 	
@@ -111,14 +135,14 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 			return;
 		}
 		//设置注释
-		context.getCommentGenerator().addComment(parent);
+		context.getCommentGenerator().addComment(parent,"表名");
 		XmlElement answer=new XmlElement("sql");
 		//设置id
 		Attribute idAttribute=new Attribute("id", "tableName");
 		answer.addAttribute(idAttribute);
-		
+		String alias=StringUtils.isEmpty(tableAlias)?"":tableAlias.substring(0, tableAlias.length()-1);
 		TextElement text=new TextElement(getIntrospectedTable().getTableName().toLowerCase()
-				+" "+tableAlias);
+				+" "+alias);
 		answer.addElement(text);
 		
 		parent.addElement(answer);
@@ -133,45 +157,52 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 			return;
 		}
 		//设置注释
-		context.getCommentGenerator().addComment(parent);
+		context.getCommentGenerator().addComment(parent,"所有列");
 		XmlElement answer=new XmlElement("sql");
 		//设置id
 		Attribute idAttribute=new Attribute("id", "selectColumns");
 		answer.addAttribute(idAttribute);
 		//遍历设置字段
-		StringBuilder content=new StringBuilder("");
+		
 		List<IntrospectedColumn> columns=getIntrospectedTable().getColumns();
 		String columnName="";
-		for (int i = 0; i < columns.size(); i++) {
+		for (int i = 0; i < columns.size()-1; i++) {
+			StringBuilder content=new StringBuilder("");
 			columnName=columns.get(i).getColumnName();
-			xmlIndent(content, 2);
 			content.append(tableAlias);
 			content.append(columnName);
 			content.append("  as  ");
 			content.append(context.getNameConfirm().getBeanFieldName(columns.get(i)));
 			content.append(",");
-			newLine(content);
+			answer.addElement(new TextElement(content.toString()));
 		}
-		content.delete(content.length()-3,content.length()-1);
-		TextElement text=new TextElement(content.toString());
-		answer.addElement(text);
+		StringBuilder content=new StringBuilder("");
+		columnName=columns.get(columns.size()-1).getColumnName();
+		content.append(tableAlias);
+		content.append(columnName);
+		content.append("  as  ");
+		content.append(context.getNameConfirm().getBeanFieldName(columns.get(columns.size()-1)));
+		answer.addElement(new TextElement(content.toString()));
 		
 		parent.addElement(answer);
 	}
 	
 	/**
-	 * 获取查询所有sql语句
+	 * 获取通过条件查询
 	 * @param parent
 	 */
-	protected void getSelectAll(XmlElement parent){
-		if(!generateSelectAllEnable){
+	protected void getSelectByCondition(XmlElement parent){
+		if(!generateSelectByConditionEnable){
 			return;
 		}
 		//设置注释
-		context.getCommentGenerator().addComment(parent);
+		context.getCommentGenerator().addComment(parent,"通过条件查询");
 		XmlElement answer=new XmlElement("select");
 		//设置id
-		Attribute idAttribute=new Attribute("id", "select"+context.getNameConfirm().getBeanName(introspectedTable)+"List");
+		Attribute idAttribute=new Attribute("id",
+				properties.getProperty(PropertyRegistry.MAPPER_SELECTBYCONDITION_ID_PREFIX)+
+				context.getNameConfirm().getBeanName(introspectedTable)+
+				properties.getProperty(PropertyRegistry.MAPPER_SELECTBYCONDITION_ID_SUFFIX));
 		answer.addAttribute(idAttribute);
 		//设置入参和返回的类
 		Attribute parameterTypeAttribute;
@@ -188,59 +219,62 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 		answer.addAttribute(parameterTypeAttribute);
 		answer.addAttribute(resultTypeAttribute);
 		//添加查询所有节点内容
-		StringBuilder content=new StringBuilder("");
-		content.append("select");
-		newLine(content);
-		xmlIndent(content, 2);
-		content.append("<include refid=\"selectColumns\"></include>");
-		newLine(content);
-		xmlIndent(content, 2);
-		content.append("from");
-		newLine(content);
-		xmlIndent(content, 2);
-		content.append("<include refid=\"tableName\"></include>");
-		newLine(content);
-		xmlIndent(content, 2);
-		content.append("<where>");
+		answer.addElement(new TextElement("select"));
+		answer.addElement(new TextElement("<include refid=\"selectColumns\"></include>"));
+		answer.addElement(new TextElement("from"));
+		answer.addElement(new TextElement("<include refid=\"tableName\"></include>"));
 		//TODO 
 		//添加where条件
-		IntrospectedColumn column=null;
-		List<IntrospectedColumn> columns=introspectedTable.getColumns();
-		String columnName="";
-		for (int i = 0; i < columns.size(); i++) {
-			column=columns.get(i);
-			columnName=context.getNameConfirm().getBeanFieldName(column);
-			newLine(content);
-			xmlIndent(content, 4);
-			content.append("<if test=\""+columnName+" !=null and "+columnName+"!=''\">");
-			newLine(content);
-			xmlIndent(content, 6);
-			if(tableAlias==null||tableAlias.length()<1){
-				content.append("and ")
-				.append(column.getColumnName())
-				.append(" = #{ ")
-				.append(columnName)
-				.append(" }");
-			}else{
-				content.append("and ")
-				.append(tableAlias)
-				.append(".")
-				.append(column.getColumnName())
-				.append(" = #{ ")
-				.append(columnName)
-				.append(" }");
-			}
-			newLine(content);
-			xmlIndent(content, 4);
-			content.append("</if>");
-			
+		addWhereCondition(answer);
+
+		parent.addElement(answer);
+	}
+	
+	/**
+	 * 获取通过主键查询
+	 * @param parent
+	 */
+	protected void getSelectByPrimaryKey(XmlElement parent){
+		if(!generateSelectByPrimaryKeyEnable){
+			return;
 		}
-		newLine(content);
-		xmlIndent(content, 2);
-		content.append("</where>");
-		//添加内容节点
-		TextElement text=new TextElement(content.toString());
-		answer.addElement(text);
+		//设置注释
+		context.getCommentGenerator().addComment(parent,"通过主键查询");
+		XmlElement answer=new XmlElement("select");
+		//设置id
+		Attribute idAttribute=new Attribute("id",
+				properties.getProperty(PropertyRegistry.MAPPER_SELECTBYPRIMARYKEY_ID_PREFIX)+
+				context.getNameConfirm().getBeanName(introspectedTable)+
+				properties.getProperty(PropertyRegistry.MAPPER_SELECTBYPRIMARYKEY_ID_SUFFIX));
+		answer.addAttribute(idAttribute);
+		//设置入参和返回的类
+		Attribute parameterTypeAttribute;
+		Attribute resultTypeAttribute;
+		IntrospectedColumn pkColumn=introspectedTable.getFirstPrimaryKey();
+		FullyQualifiedJavaType fieldType = JavaBeansUtil.getFieldType(pkColumn);
+		if(mapParamEnable){
+			parameterTypeAttribute=new Attribute("parameterType", fieldType.getFullyQualifiedName());
+			resultTypeAttribute=new Attribute("resultType", "java.util.Map");
+		}else{
+			String beanFullName=context.getJavaModelGeneratorConfiguration().getTargetPackage()+"."
+					+context.getNameConfirm().getBeanName(introspectedTable);
+			parameterTypeAttribute=new Attribute("parameterType", fieldType.getFullyQualifiedName());
+			resultTypeAttribute=new Attribute("resultType", beanFullName);
+		}
+		answer.addAttribute(parameterTypeAttribute);
+		answer.addAttribute(resultTypeAttribute);
+		//添加查询所有节点内容
+		StringBuilder content=new StringBuilder("");
+		answer.addElement(new TextElement("select"));
+		answer.addElement(new TextElement("<include refid=\"selectColumns\"></include>"));
+		answer.addElement(new TextElement("from"));
+		answer.addElement(new TextElement("<include refid=\"tableName\"></include>"));
+		answer.addElement(new TextElement("where"));
+		
+		content.append(getTableAliasColumnName(pkColumn.getColumnName()))
+		.append(" = #{ value }");
+		answer.addElement(new TextElement("  "+content.toString()));
+
 		parent.addElement(answer);
 	}
 	
@@ -253,7 +287,7 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 			return;
 		}
 		//设置注释
-		context.getCommentGenerator().addComment(parent);
+		context.getCommentGenerator().addComment(parent,"普通插入");
 		XmlElement answer=new XmlElement("insert");
 		//设置id
 		Attribute idAttribute=new Attribute("id", "insert");
@@ -320,7 +354,7 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 	 * @return
 	 */
 	protected boolean getProperty(String key){
-		String value=this.getContext().getSqlMapGeneratorConfiguration().getProperty(key);
+		String value=properties.getProperty(key);
 		if(value==null||"Y".equals(value)){
 			return true;
 		}else{
@@ -330,8 +364,164 @@ public class MyBatis3MapperGenerator extends AbstractXmlGenerator {
 	
 	protected void addComment(XmlElement xmlElement,StringBuilder content){
 		xmlElement.addElement(new TextElement("<!--")); //$NON-NLS-1$
-        xmlElement.addElement(new TextElement(content.toString()));
+        xmlElement.addElement(new TextElement("  "+content.toString()));
         xmlElement.addElement(new TextElement("-->")); //$NON-NLS-1$
+	}
+	
+	/**
+	 * 根据{@code mapperWhereCondition}配置添加where条件
+	 * @param answer
+	 */
+	private void addWhereCondition(XmlElement answer){
+		if(PropertyRegistry.MAPPER_WHERE_CONDITION_NULL.equals(mapperWhereCondition)){
+			return;
+		}
+		if(PropertyRegistry.MAPPER_WHERE_CONDITION_DEFAULT.equals(mapperWhereCondition)){
+			answer.addElement(new TextElement("<where>"));
+			StringBuilder content=new StringBuilder("");
+			IntrospectedColumn column=null;
+			List<IntrospectedColumn> columns=introspectedTable.getColumns();
+			String columnName="";
+			for (int i = 0; i < columns.size(); i++) {
+				column=columns.get(i);
+				columnName=context.getNameConfirm().getBeanFieldName(column);
+				newLine(content);
+				xmlIndent(content, 4);
+				content.append("<if test=\""+columnName+" !=null and "+columnName+"!=''\">");
+				newLine(content);
+				xmlIndent(content, 6);
+				if(tableAlias==null||tableAlias.length()<1){
+					content.append("and ")
+					.append(column.getColumnName())
+					.append(" = #{ ")
+					.append(columnName)
+					.append(" }");
+				}else{
+					content.append("and ")
+					.append(tableAlias)
+					.append(column.getColumnName())
+					.append(" = #{ ")
+					.append(columnName)
+					.append(" }");
+				}
+				newLine(content);
+				xmlIndent(content, 4);
+				content.append("</if>");
+				
+			}
+			//添加内容节点
+			TextElement text=new TextElement(content.toString());
+			answer.addElement(text);
+			answer.addElement(new TextElement("</where>"));
+		}
+		
+		if(PropertyRegistry.MAPPER_WHERE_CONDITION_DYNAMIC.equals(mapperWhereCondition)){
+			XmlElement where=new XmlElement("where");
+			XmlElement foreach=new XmlElement("foreach");
+			foreach.addAttribute(new Attribute("collection", "condition.criteria"));
+			foreach.addAttribute(new Attribute("item", "condition.criterion"));
+			XmlElement choose=new XmlElement("choose");
+			
+			XmlElement whenNoValue=new XmlElement("when");
+			whenNoValue.addAttribute(new Attribute("test", "criterion.noValue"));
+			whenNoValue.addElement(new TextElement("and ${criterion.condition}"));
+			choose.addElement(whenNoValue);
+			
+			XmlElement whenSingleValue=new XmlElement("when");
+			whenSingleValue.addAttribute(new Attribute("test", "criterion.singleValue"));
+			whenSingleValue.addElement(new TextElement("and ${criterion.condition} #{criterion.value}"));
+			choose.addElement(whenSingleValue);
+			
+			XmlElement whenBetweenValue=new XmlElement("when");
+			whenBetweenValue.addAttribute(new Attribute("test", "criterion.betweenValue"));
+			whenBetweenValue.addElement(new TextElement("and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}"));
+			choose.addElement(whenBetweenValue);
+			
+			XmlElement whenListValue=new XmlElement("when");
+			whenListValue.addAttribute(new Attribute("test", "criterion.listValue"));
+			whenListValue.addElement(new TextElement("and ${criterion.condition} "));
+			XmlElement listValue=new XmlElement("foreach");
+			listValue.addAttribute(new Attribute("collection", "criterion.value"));
+			listValue.addAttribute(new Attribute("item", "listItem"));
+			listValue.addAttribute(new Attribute("open", "("));
+			listValue.addAttribute(new Attribute("close", ")"));
+			listValue.addAttribute(new Attribute("separator", ","));
+			listValue.addElement(new TextElement("#{listItem}"));
+			whenListValue.addElement(listValue);
+			choose.addElement(whenListValue);
+			
+			foreach.addElement(choose);
+			where.addElement(foreach);
+			answer.addElement(where);
+		}
+		if(PropertyRegistry.MAPPER_WHERE_CONDITION_STATIC.equals(mapperWhereCondition)){
+			JSONObject conditin=this.getContext().getSqlMapGeneratorConfiguration().getCondition();
+			if(conditin.getBooleanValue("valid")){
+				XmlElement where=new XmlElement("where");
+				
+				answer.addElement(where);
+				
+				JSONArray criteria=conditin.getJSONArray("criteria");
+				JSONObject temp=null;
+				for (int i = 0; i < criteria.size(); i++) {
+					temp=criteria.getJSONObject(i);
+					String condition=temp.getString("condition");
+					String simpleCondition=temp.getString("simpleCondition");
+					String value=temp.getString("value");
+					String secondValue=temp.getString("secondValue");
+					String property=temp.getString("property");
+					Boolean noValue=temp.getBoolean("noValue");
+					Boolean singleValue=temp.getBoolean("singleValue");
+					Boolean betweenValue=temp.getBoolean("betweenValue");
+					Boolean listValue=temp.getBoolean("listValue");
+					String typeHandler=temp.getString("typeHandler");
+					
+					XmlElement if1=new XmlElement("if");
+					String beanPro=nameConfirm.getBeanFieldName(property);
+					String testValue=beanPro+" != null && "+beanPro+" !=''";
+					if1.addAttribute(new Attribute("test",testValue));
+					StringBuilder text=new StringBuilder();
+					if(noValue){
+						text.append("and ").append(getTableAliasColumnName(property)+simpleCondition);
+						if1.addElement(new TextElement(text.toString()));
+					}
+					if(singleValue){
+						text.append("and ").append(getTableAliasColumnName(property)+simpleCondition).append(" #{").append("params."+property).append("}");
+						if1.addElement(new TextElement(text.toString()));
+					}
+					if(betweenValue){
+						text.append("and ").append(getTableAliasColumnName(property)+simpleCondition).append(" #{").append("params."+property).append("Start} ")
+						.append("and ").append(" #{").append("params."+property).append("End} ");
+						if1.addElement(new TextElement(text.toString()));
+					}
+					if(listValue){
+						text.append("and ").append(condition);
+						if1.addElement(new TextElement(text.toString()));
+						XmlElement listValue2=new XmlElement("foreach");
+						listValue2.addAttribute(new Attribute("collection", "params."+property));
+						listValue2.addAttribute(new Attribute("item", "listItem"));
+						listValue2.addAttribute(new Attribute("open", "("));
+						listValue2.addAttribute(new Attribute("close", ")"));
+						listValue2.addAttribute(new Attribute("separator", ","));
+						listValue2.addElement(new TextElement("#{listItem}"));
+						if1.addElement(listValue2);
+						
+					}
+					where.addElement(if1);
+					//TODO 获取其它条件信息
+				}
+			}
+		}
+		
+	}
+	private String getTableAliasColumnName(String columnName){
+		if(tableAlias==null||tableAlias.length()<1){
+			return columnName;
+		}else{
+			StringBuilder content=new StringBuilder(tableAlias);
+			content.append(columnName);
+			return content.toString();
+		}
 	}
 	public static void main(String[] args) {
 		MyBatis3MapperGenerator m=new MyBatis3MapperGenerator();

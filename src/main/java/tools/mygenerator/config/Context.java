@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -65,6 +66,16 @@ public class Context {
 	private TableChooseConfiguration tableChooseConfiguration;
 	
 	/**
+	 * 全局表配置
+	 */
+	private TableConfiguration tableConfiguration;
+	
+	/**
+	 * 表配置
+	 */
+	private Map<String, TableConfiguration> tableConfigurationMap;
+	
+	/**
 	 * 注释生成类
 	 */
 	private CommentGenerator commentGenerator;
@@ -102,6 +113,11 @@ public class Context {
 	 * 生成文件是否覆盖
 	 */
     private boolean overwriteEnabled;
+    
+    /**
+     * 全局使用驼峰命名
+     */
+    private boolean globalNameCamelCaseEnable;
     
     private NameConfirm nameConfirm;
     
@@ -176,6 +192,24 @@ public class Context {
 	public NameConfirm getNameConfirm() {
 		return nameConfirm;
 	}
+	public boolean isGlobalNameCamelCaseEnable() {
+		return globalNameCamelCaseEnable;
+	}
+	public void setGlobalNameCamelCaseEnable(boolean globalNameCamelCaseEnable) {
+		this.globalNameCamelCaseEnable = globalNameCamelCaseEnable;
+	}
+	public Map<String, TableConfiguration> getTableConfigurationMap() {
+		return tableConfigurationMap;
+	}
+	public void setTableConfigurationMap(Map<String, TableConfiguration> tableConfigurationMap) {
+		this.tableConfigurationMap = tableConfigurationMap;
+	}
+	public TableConfiguration getTableConfiguration() {
+		return tableConfiguration;
+	}
+	public void setTableConfiguration(TableConfiguration tableConfiguration) {
+		this.tableConfiguration = tableConfiguration;
+	}
 
 	/**
 	 * 将数据库信息封装为实体类
@@ -193,7 +227,7 @@ public class Context {
 			//databaseInfo(meta);
 	    	DatabaseIntrospector di=new DatabaseIntrospector();
 	    	di.setDatabaseMetaData(meta);
-	    	List<IntrospectedTable> list=di.introspectTables(tableChooseConfiguration, warnings,null);
+	    	List<IntrospectedTable> list=di.introspectTables(tableChooseConfiguration, warnings,tableConfigurationMap,tableConfiguration);
 	    	this.introspectedTables=list;
 	    	return list;
 		} catch (SQLException e) {
@@ -269,6 +303,18 @@ public class Context {
     }
     
     /**
+     * 完善表配置信息
+     * 将全局配置和表私有配置正确赋值
+     */
+    private void finishTableConfig(){
+    	IntrospectedTable introspectedTable=null;
+    	for (int i = 0; i < introspectedTables.size(); i++) {
+    		introspectedTable=introspectedTables.get(i);
+    		tableConfigurationMap.put(introspectedTable.getTableName(), tableConfiguration);
+		}
+    }
+    
+    /**
      * 初始化context
      * @throws Exception 
      */
@@ -287,6 +333,8 @@ public class Context {
     	}
     	nameConfirm=new NameConfirm(this);
     	introspectTables(warnings);
+    	//完善表配置信息
+    	//finishTableConfig();
     	
     }
     
@@ -367,7 +415,7 @@ public class Context {
     	DatabaseIntrospector di=new DatabaseIntrospector();
     	di.setDatabaseMetaData(databaseMeta);
     	
-    	List<IntrospectedTable> list=di.introspectTables(tc, warnings,null);
+    	List<IntrospectedTable> list=di.introspectTables(tc, warnings,null,null);
     	//list=list.subList(0, 10);
     	FileInputStream fis=new FileInputStream(PathUtil.getClassPath()+"generator"+File.separator+"dictionary_temp.xls");
     	GenerateDictionary gd=new GenerateDictionary(fis);
