@@ -19,8 +19,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.sun.xml.internal.bind.v2.TODO;
-
 import tools.mygenerator.api.CommentGenerator;
 import tools.mygenerator.api.GeneratedJavaFile;
 import tools.mygenerator.api.GeneratedXmlFile;
