@@ -15,6 +15,8 @@ public class JDBCConnectionConfiguration {
     private String userId;
 
     private String password;
+    
+    private String dbType;
 
     public JDBCConnectionConfiguration() {
         super();
@@ -51,5 +53,13 @@ public class JDBCConnectionConfiguration {
     public void setDriverClass(String driverClass) {
         this.driverClass = driverClass;
     }
+
+	public String getDbType() {
+		return dbType;
+	}
+
+	public void setDbType(String dbType) {
+		this.dbType = dbType;
+	}
 
 }

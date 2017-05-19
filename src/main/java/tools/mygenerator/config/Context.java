@@ -229,7 +229,6 @@ public class Context {
 	    	this.introspectedTables=list;
 	    	return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw new Exception("读取数据库信息失败！");
 		} finally{
 			try {
