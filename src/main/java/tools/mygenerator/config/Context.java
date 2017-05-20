@@ -208,6 +208,12 @@ public class Context {
 	public void setTableConfiguration(TableConfiguration tableConfiguration) {
 		this.tableConfiguration = tableConfiguration;
 	}
+	public JDBCConnectionConfiguration getJdbcConnectionConfiguration() {
+		return jdbcConnectionConfiguration;
+	}
+	public TableChooseConfiguration getTableChooseConfiguration() {
+		return tableChooseConfiguration;
+	}
 
 	/**
 	 * 将数据库信息封装为实体类
