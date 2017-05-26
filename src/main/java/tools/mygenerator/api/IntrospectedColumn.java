@@ -38,6 +38,17 @@ public class IntrospectedColumn {
 	 * NO  : 不是
 	 */
 	private String isAutoIncrement;
+	
+	/**
+	 * 是否主键
+	 */
+	private boolean primaryKey;
+	
+	/**
+	 * 外键字段
+	 */
+	private String foreignKey;
+	
 	public String getTableCatalog() {
 		return tableCatalog;
 	}
@@ -109,6 +120,18 @@ public class IntrospectedColumn {
 	}
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+	public boolean isPrimaryKey() {
+		return primaryKey;
+	}
+	public void setPrimaryKey(boolean primaryKey) {
+		this.primaryKey = primaryKey;
+	}
+	public String getForeignKey() {
+		return foreignKey;
+	}
+	public void setForeignKey(String foreignKey) {
+		this.foreignKey = foreignKey;
 	}
 	
 	

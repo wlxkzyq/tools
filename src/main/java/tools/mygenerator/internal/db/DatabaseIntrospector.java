@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -197,12 +198,29 @@ public class DatabaseIntrospector {
     		ignoreColumns=tc.getIgnoredColumns();
     	}
     	
+    	Map<String,IntrospectedPrimaryKey> pkMap=new HashMap<String, IntrospectedPrimaryKey>();
+		Map<String,IntrospectedForeignKey> fkMap=new HashMap<String, IntrospectedForeignKey>();
+		IntrospectedPrimaryKey pk=null;
+		IntrospectedForeignKey fk=null;
+		Iterator<IntrospectedPrimaryKey> iterator=t.getPrimaryKeys().iterator();
+		while (iterator.hasNext()) {
+			pk=iterator.next();
+			pkMap.put(pk.getColumnName(), pk);
+		}
+		Iterator<IntrospectedForeignKey> fkiterator=t.getForeignKeys().iterator();
+		while (fkiterator.hasNext()) {
+			fk=fkiterator.next();
+			fkMap.put(fk.getFkColumnName(), fk);
+		}
+		String columnName="";
     	while (resultSet.next()) {
+    		columnName=resultSet.getString("COLUMN_NAME").toLowerCase();
+    		
     		//如果该列被忽略
-    		if(ignoreColumns!=null&&ignoreColumns.contains(resultSet.getString("COLUMN_NAME").toLowerCase()))continue;
+    		if(ignoreColumns!=null&&ignoreColumns.contains(columnName))continue;
     		
     		column=new IntrospectedColumn();
-    		column.setColumnName(resultSet.getString("COLUMN_NAME").toLowerCase());
+    		column.setColumnName(columnName);
     		column.setColumnSize(resultSet.getInt("COLUMN_SIZE"));
     		column.setDataType(resultSet.getInt("DATA_TYPE"));
     		column.setDecimalDigits(resultSet.getInt("DECIMAL_DIGITS"));
@@ -214,6 +232,13 @@ public class DatabaseIntrospector {
     		column.setTableSchema(resultSet.getString("TABLE_SCHEM"));
     		column.setTypeName(resultSet.getString("TYPE_NAME"));
     		column.setDefaultValue(resultSet.getString("COLUMN_DEF"));
+    		
+    		if(pkMap.containsKey(columnName)){
+    			column.setPrimaryKey(true);
+    		}
+    		if(fkMap.containsKey(columnName)){
+    			column.setForeignKey(fkMap.get(columnName).getPkTableName()+"."+fkMap.get(columnName).getPkColumnName());
+    		}
     		columns.add(column);
 		}
     	t.setColumns(columns);
