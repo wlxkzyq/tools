@@ -9,6 +9,7 @@
 <title>Insert title here</title>
 </head>
 <body ${fa==1}>
+	
 富德
 </body>
 </html>
